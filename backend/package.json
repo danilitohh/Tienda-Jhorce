@@ -1,0 +1,9 @@
+{
+  "name": "jhorce-backend-domain",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Domain and persistence boundaries consumed by the Jhorce Next.js application",
+  "dependencies": {
+    "zod": "^3.24.3"
+  }
+}

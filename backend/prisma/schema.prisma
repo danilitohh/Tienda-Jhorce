@@ -1,0 +1,520 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+  SUPERADMIN
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+  FREE_SHIPPING
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum OrderStatus {
+  CREATED
+  CONFIRMED
+  PAID
+  PREPARING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  RETURNED
+}
+
+enum ShipmentStatus {
+  PREPARING
+  SHIPPED
+  IN_TRANSIT
+  DELIVERED
+  FAILED
+  RETURNED
+}
+
+enum ReturnStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  REFUNDED
+  RECEIVED
+}
+
+enum JobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+// Supabase Auth owns credentials. This profile stores commerce-specific identity and RBAC data.
+model UserProfile {
+  id          String      @id @db.Uuid
+  email       String      @unique
+  firstName   String
+  lastName    String
+  phone       String?
+  role        UserRole    @default(CUSTOMER)
+  isActive    Boolean     @default(true)
+  deletedAt   DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  addresses   Address[]
+  carts       Cart[]
+  orders      Order[]
+  reviews     Review[]
+  wishlists   WishlistItem[]
+  redemptions CouponRedemption[]
+  returns     ReturnRequest[]
+  auditLogs   AuditLog[]
+}
+
+// Reusable customer addresses are snapshotted onto orders at checkout.
+model Address {
+  id            String       @id @default(uuid()) @db.Uuid
+  userId        String       @db.Uuid
+  label         String       @default("Principal")
+  recipientName String
+  line1         String
+  line2         String?
+  city          String
+  department    String
+  postalCode    String?
+  country       String       @default("CO")
+  phone         String?
+  isDefault     Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  user          UserProfile  @relation(fields: [userId], references: [id])
+  orders        Order[]
+  shipments     Shipment[]
+
+  @@index([userId, isDefault])
+}
+
+// Category hierarchy powers navigation, filtering and SEO landing pages.
+model Category {
+  id          String     @id @default(uuid()) @db.Uuid
+  parentId    String?    @db.Uuid
+  name        String
+  slug        String     @unique
+  description String?
+  imageUrl    String?
+  sortOrder   Int        @default(0)
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  parent      Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryTree")
+  products    Product[]
+  couponCategories CouponCategory[]
+
+  @@index([parentId, isActive, sortOrder])
+}
+
+// Product content is separate from sellable variants so editorial data stays stable.
+model Product {
+  id              String          @id @default(uuid()) @db.Uuid
+  categoryId      String          @db.Uuid
+  name            String
+  slug            String          @unique
+  shortDescription String?
+  description     String?
+  status          ProductStatus   @default(DRAFT)
+  basePrice       Decimal         @db.Decimal(12, 2)
+  promotionalPrice Decimal?        @db.Decimal(12, 2)
+  promoStartsAt   DateTime?
+  promoEndsAt     DateTime?
+  seoTitle        String?
+  seoDescription  String?
+  deletedAt       DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  category        Category        @relation(fields: [categoryId], references: [id])
+  images          ProductImage[]
+  variants        ProductVariant[]
+  cartItems       CartItem[]
+  orderItems      OrderItem[]
+  reviews         Review[]
+  wishlistItems   WishlistItem[]
+  couponProducts  CouponProduct[]
+
+  @@index([categoryId, status])
+  @@index([status, createdAt])
+  @@index([name])
+}
+
+// Images are stored in Supabase Storage, with position controlling the gallery order.
+model ProductImage {
+  id        String   @id @default(uuid()) @db.Uuid
+  productId String   @db.Uuid
+  url       String
+  altText   String
+  position  Int      @default(0)
+  width     Int?
+  height    Int?
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, position])
+}
+
+// A variant is the inventory and SKU boundary for size, color or capacity options.
+model ProductVariant {
+  id             String      @id @default(uuid()) @db.Uuid
+  productId      String      @db.Uuid
+  sku            String      @unique
+  name           String
+  optionValues   Json
+  priceOverride  Decimal?    @db.Decimal(12, 2)
+  isActive       Boolean     @default(true)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  product        Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  inventory      Inventory?
+  cartItems      CartItem[]
+  orderItems     OrderItem[]
+  movements      InventoryMovement[]
+
+  @@index([productId, isActive])
+}
+
+// Inventory uses a version field for optimistic concurrency and reservedUntil for checkout holds.
+model Inventory {
+  id            String         @id @default(uuid()) @db.Uuid
+  variantId     String         @unique @db.Uuid
+  available     Int            @default(0)
+  reserved      Int            @default(0)
+  reservedUntil DateTime?
+  version       Int            @default(0)
+  updatedAt     DateTime       @updatedAt
+  variant       ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+}
+
+// Every stock change is append-only for reconciliation and admin auditability.
+model InventoryMovement {
+  id           String          @id @default(uuid()) @db.Uuid
+  variantId    String          @db.Uuid
+  quantity     Int
+  reason       String
+  referenceId  String?
+  createdAt    DateTime        @default(now())
+  variant      ProductVariant  @relation(fields: [variantId], references: [id])
+
+  @@index([variantId, createdAt])
+}
+
+// One active cart per user or anonymous session, with server-side totals calculated at checkout.
+model Cart {
+  id           String     @id @default(uuid()) @db.Uuid
+  userId       String?    @db.Uuid
+  sessionToken String?    @unique
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  user         UserProfile? @relation(fields: [userId], references: [id])
+  items        CartItem[]
+
+  @@index([userId, updatedAt])
+}
+
+// Cart item prices are snapshots for display only and are never trusted during order creation.
+model CartItem {
+  id        String          @id @default(uuid()) @db.Uuid
+  cartId    String          @db.Uuid
+  productId String          @db.Uuid
+  variantId String          @db.Uuid
+  quantity  Int
+  cart      Cart            @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product         @relation(fields: [productId], references: [id])
+  variant   ProductVariant  @relation(fields: [variantId], references: [id])
+
+  @@unique([cartId, variantId])
+}
+
+// Coupons hold business rules that are evaluated server-side in checkout.
+model Coupon {
+  id             String           @id @default(uuid()) @db.Uuid
+  code           String           @unique
+  discountType   DiscountType
+  value          Decimal          @db.Decimal(12, 2)
+  startsAt       DateTime
+  endsAt         DateTime
+  totalLimit     Int?
+  perUserLimit   Int?
+  usedCount      Int              @default(0)
+  minimumSubtotal Decimal?        @db.Decimal(12, 2)
+  isActive       Boolean          @default(true)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  products       CouponProduct[]
+  categories     CouponCategory[]
+  redemptions    CouponRedemption[]
+
+  @@index([code, isActive, startsAt, endsAt])
+}
+
+model CouponProduct {
+  couponId  String  @db.Uuid
+  productId String  @db.Uuid
+  coupon    Coupon  @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([couponId, productId])
+}
+
+model CouponCategory {
+  couponId   String   @db.Uuid
+  categoryId String   @db.Uuid
+  coupon     Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([couponId, categoryId])
+}
+
+model CouponRedemption {
+  id        String      @id @default(uuid()) @db.Uuid
+  couponId  String      @db.Uuid
+  userId    String      @db.Uuid
+  orderId   String      @db.Uuid
+  createdAt DateTime    @default(now())
+  coupon    Coupon      @relation(fields: [couponId], references: [id])
+  user      UserProfile @relation(fields: [userId], references: [id])
+  order     Order       @relation(fields: [orderId], references: [id])
+
+  @@unique([couponId, orderId])
+  @@index([userId, couponId])
+}
+
+// Orders own immutable money and address snapshots for reliable history and invoices.
+model Order {
+  id              String             @id @default(uuid()) @db.Uuid
+  orderNumber     String             @unique
+  userId          String             @db.Uuid
+  shippingAddressId String           @db.Uuid
+  status          OrderStatus        @default(CREATED)
+  subtotal        Decimal            @db.Decimal(12, 2)
+  discountTotal   Decimal            @default(0) @db.Decimal(12, 2)
+  shippingTotal   Decimal            @default(0) @db.Decimal(12, 2)
+  total           Decimal            @db.Decimal(12, 2)
+  currency        String             @default("COP")
+  addressSnapshot Json
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  user            UserProfile        @relation(fields: [userId], references: [id])
+  shippingAddress Address             @relation(fields: [shippingAddressId], references: [id])
+  items           OrderItem[]
+  payment         Payment?
+  shipment        Shipment?
+  statusHistory   OrderStatusHistory[]
+  redemptions     CouponRedemption[]
+  returns         ReturnRequest[]
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
+
+// Order lines retain product, variant and price snapshots even if the catalog later changes.
+model OrderItem {
+  id            String         @id @default(uuid()) @db.Uuid
+  orderId       String         @db.Uuid
+  productId     String         @db.Uuid
+  variantId     String         @db.Uuid
+  productName   String
+  sku           String
+  unitPrice     Decimal        @db.Decimal(12, 2)
+  quantity      Int
+  lineTotal     Decimal        @db.Decimal(12, 2)
+  order         Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product      Product         @relation(fields: [productId], references: [id])
+  variant      ProductVariant   @relation(fields: [variantId], references: [id])
+
+  @@index([orderId])
+}
+
+// The payment record is provider-agnostic and supports idempotent retries and refunds.
+model Payment {
+  id                String        @id @default(uuid()) @db.Uuid
+  orderId           String        @unique @db.Uuid
+  provider          String
+  providerPaymentId String?
+  status            PaymentStatus  @default(PENDING)
+  amount            Decimal       @db.Decimal(12, 2)
+  currency          String        @default("COP")
+  idempotencyKey    String        @unique
+  metadata          Json?
+  approvedAt        DateTime?
+  refundedAt        DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  order             Order         @relation(fields: [orderId], references: [id])
+  webhookEvents     PaymentWebhookEvent[]
+
+  @@index([status, createdAt])
+}
+
+// Processed event IDs make webhook handling safe to repeat.
+model PaymentWebhookEvent {
+  id          String    @id @default(uuid()) @db.Uuid
+  eventId     String    @unique
+  paymentId   String    @db.Uuid
+  eventType   String
+  payload     Json
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+  payment     Payment   @relation(fields: [paymentId], references: [id])
+}
+
+// Carrier-agnostic shipping data supports manual Interrapidísimo updates now and API integration later.
+model Shipment {
+  id            String         @id @default(uuid()) @db.Uuid
+  orderId       String         @unique @db.Uuid
+  addressId     String         @db.Uuid
+  carrier       String         @default("Interrapidísimo")
+  trackingNumber String?
+  status        ShipmentStatus @default(PREPARING)
+  shippingFee   Decimal        @db.Decimal(12, 2)
+  shippedAt     DateTime?
+  deliveredAt   DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  order         Order          @relation(fields: [orderId], references: [id])
+  address       Address        @relation(fields: [addressId], references: [id])
+  statusHistory ShipmentStatusHistory[]
+}
+
+model ShipmentStatusHistory {
+  id         String         @id @default(uuid()) @db.Uuid
+  shipmentId String         @db.Uuid
+  status     ShipmentStatus
+  trackingNumber String?
+  note       String?
+  changedBy  String?
+  createdAt  DateTime       @default(now())
+  shipment   Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+
+  @@index([shipmentId, createdAt])
+}
+
+model OrderStatusHistory {
+  id        String      @id @default(uuid()) @db.Uuid
+  orderId   String      @db.Uuid
+  status    OrderStatus
+  changedBy String?
+  note      String?
+  createdAt DateTime    @default(now())
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId, createdAt])
+}
+
+model Review {
+  id        String      @id @default(uuid()) @db.Uuid
+  productId String      @db.Uuid
+  userId    String      @db.Uuid
+  rating    Int
+  title     String?
+  body      String
+  isApproved Boolean    @default(false)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  product   Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      UserProfile @relation(fields: [userId], references: [id])
+
+  @@unique([productId, userId])
+  @@index([productId, isApproved, createdAt])
+}
+
+model WishlistItem {
+  userId    String      @db.Uuid
+  productId String      @db.Uuid
+  createdAt DateTime    @default(now())
+  user      UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([userId, productId])
+}
+
+model ReturnRequest {
+  id             String       @id @default(uuid()) @db.Uuid
+  orderId        String       @db.Uuid
+  userId         String       @db.Uuid
+  reason         String
+  status         ReturnStatus @default(REQUESTED)
+  adminNote      String?
+  refundAmount   Decimal?     @db.Decimal(12, 2)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  order          Order        @relation(fields: [orderId], references: [id])
+  user           UserProfile  @relation(fields: [userId], references: [id])
+}
+
+// Vercel Cron-compatible jobs replace persistent workers for reservations and email retries.
+model Job {
+  id          String    @id @default(uuid()) @db.Uuid
+  type        String
+  payload     Json
+  status      JobStatus @default(PENDING)
+  attempts    Int       @default(0)
+  availableAt DateTime  @default(now())
+  lastError   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status, availableAt])
+}
+
+model EmailDelivery {
+  id           String    @id @default(uuid()) @db.Uuid
+  userId       String?   @db.Uuid
+  template     String
+  recipient    String
+  status       JobStatus @default(PENDING)
+  attempts     Int       @default(0)
+  providerId   String?
+  lastError    String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+// Immutable admin action history supports security review and operational diagnosis.
+model AuditLog {
+  id         String      @id @default(uuid()) @db.Uuid
+  actorId    String?     @db.Uuid
+  action     String
+  entityType String
+  entityId   String
+  metadata   Json?
+  createdAt  DateTime    @default(now())
+  actor      UserProfile? @relation(fields: [actorId], references: [id])
+
+  @@index([entityType, entityId, createdAt])
+  @@index([actorId, createdAt])
+}
+
+model SiteSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}

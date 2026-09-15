@@ -1,0 +1,13 @@
+node_modules/
+.next/
+out/
+coverage/
+.playwright-cli/
+test-results/
+playwright-report/
+*.tsbuildinfo
+.env
+.env.local
+.vercel/
+backend/prisma/dev.db
+*.log

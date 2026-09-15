@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --ink: #111318;
+  --paper: #f7f8fa;
+  --muted: #667085;
+  --accent: #2855ff;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body { margin: 0; background: var(--paper); }
+
+::selection { background: var(--accent); color: #fff; }
+
+button, a, input, select { -webkit-tap-highlight-color: transparent; }
+
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 3px solid rgba(40, 85, 255, 0.35);
+  outline-offset: 3px;
+}
+
+/* The hero orbit is a deliberately restrained brand motion with a reduced-motion fallback. */
+@keyframes drift {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(18px, -12px, 0) rotate(6deg); }
+}
+
+@keyframes pulse-ring {
+  0%, 100% { opacity: .24; transform: scale(.92); }
+  50% { opacity: .52; transform: scale(1); }
+}
+
+.animate-drift { animation: drift 8s ease-in-out infinite; }
+.animate-pulse-ring { animation: pulse-ring 5s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+

@@ -1,0 +1,460 @@
+{
+  "communities": {
+    "0": [
+      "backend_src_catalog_catalog_data",
+      "backend_src_catalog_catalog_data_getproductbyslug",
+      "backend_src_catalog_catalog_data_productcategory",
+      "backend_src_catalog_catalog_data_products",
+      "backend_src_catalog_catalog_data_storeproduct",
+      "frontend_app_carrito_page",
+      "frontend_app_carrito_page_cartpage",
+      "frontend_app_carrito_page_metadata",
+      "frontend_app_page",
+      "frontend_app_page_homepage",
+      "frontend_app_producto_slug_page",
+      "frontend_app_producto_slug_page_generatemetadata",
+      "frontend_app_producto_slug_page_generatestaticparams",
+      "frontend_app_producto_slug_page_productpage",
+      "frontend_app_sitemap",
+      "frontend_app_sitemap_sitemap",
+      "frontend_components_cart_cart_provider",
+      "frontend_components_cart_cart_provider_cartcontext",
+      "frontend_components_cart_cart_provider_cartcontextvalue",
+      "frontend_components_cart_cart_provider_cartitem",
+      "frontend_components_cart_cart_provider_usecart",
+      "frontend_components_cart_cart_summary",
+      "frontend_components_cart_cart_summary_cartsummary",
+      "frontend_components_catalog_catalog_view",
+      "frontend_components_catalog_catalog_view_categories",
+      "frontend_components_product_card",
+      "frontend_components_product_card_productcard",
+      "frontend_components_product_product_details",
+      "frontend_components_product_product_details_productdetails",
+      "frontend_components_react_bits_aurora_orbit",
+      "frontend_components_react_bits_aurora_orbit_auroraorbit",
+      "frontend_components_react_bits_spotlight_card",
+      "frontend_components_react_bits_spotlight_card_spotlightcard",
+      "frontend_components_site_header",
+      "frontend_components_site_header_siteheader",
+      "frontend_lib_format",
+      "frontend_lib_format_formatcop",
+      "ref_phosphor_icons_react"
+    ],
+    "1": [
+      "frontend_package",
+      "frontend_package_json_ref_zod",
+      "frontend_package_name",
+      "frontend_package_private",
+      "frontend_package_version",
+      "frontend_playwright_config",
+      "frontend_proxy",
+      "frontend_proxy_config",
+      "frontend_proxy_proxy",
+      "frontend_tailwind_config",
+      "frontend_tailwind_config_config",
+      "frontend_tests_e2e_storefront_spec",
+      "ref_autoprefixer",
+      "ref_eslint",
+      "ref_eslint_config_next",
+      "ref_jsdom",
+      "ref_playwright_test",
+      "ref_postcss",
+      "ref_prisma",
+      "ref_prisma_client",
+      "ref_react_dom",
+      "ref_supabase_ssr",
+      "ref_supabase_supabase_js",
+      "ref_tailwindcss",
+      "ref_testing_library_jest_dom",
+      "ref_testing_library_react",
+      "ref_types_node",
+      "ref_types_react",
+      "ref_types_react_dom",
+      "ref_typescript"
+    ],
+    "2": [
+      "backend_src_checkout_checkout_service",
+      "backend_src_checkout_checkout_service_createmockcheckout",
+      "backend_src_checkout_pricing",
+      "backend_src_checkout_pricing_calculateordertotal",
+      "backend_src_checkout_pricing_calculateshipping",
+      "backend_src_checkout_pricing_calculatesubtotal",
+      "backend_src_checkout_pricing_priceline",
+      "backend_src_payments_mock_provider",
+      "backend_src_payments_mock_provider_mockpaymentprovider",
+      "backend_src_payments_mock_provider_mockpaymentprovider_confirmpayment",
+      "backend_src_payments_mock_provider_mockpaymentprovider_constructor",
+      "backend_src_payments_mock_provider_mockpaymentprovider_createpayment",
+      "backend_src_payments_mock_provider_mockpaymentprovider_handlewebhook",
+      "backend_src_payments_mock_provider_mockpaymentprovider_refundpayment",
+      "backend_src_payments_types",
+      "backend_src_payments_types_paymentevent",
+      "backend_src_payments_types_paymentintent",
+      "backend_src_payments_types_paymentprovider",
+      "backend_src_payments_types_paymentprovider_confirmpayment",
+      "backend_src_payments_types_paymentprovider_createpayment",
+      "backend_src_payments_types_paymentprovider_handlewebhook",
+      "backend_src_payments_types_paymentprovider_refundpayment",
+      "backend_src_validation_checkout",
+      "backend_src_validation_checkout_checkoutinputschema",
+      "frontend_tests_pricing_test",
+      "ref_vitest"
+    ],
+    "3": [
+      "frontend_tsconfig",
+      "frontend_tsconfig_compileroptions",
+      "frontend_tsconfig_compileroptions_allowjs",
+      "frontend_tsconfig_compileroptions_esmoduleinterop",
+      "frontend_tsconfig_compileroptions_incremental",
+      "frontend_tsconfig_compileroptions_isolatedmodules",
+      "frontend_tsconfig_compileroptions_jsx",
+      "frontend_tsconfig_compileroptions_lib",
+      "frontend_tsconfig_compileroptions_module",
+      "frontend_tsconfig_compileroptions_moduleresolution",
+      "frontend_tsconfig_compileroptions_noemit",
+      "frontend_tsconfig_compileroptions_paths",
+      "frontend_tsconfig_compileroptions_plugins",
+      "frontend_tsconfig_compileroptions_resolvejsonmodule",
+      "frontend_tsconfig_compileroptions_skiplibcheck",
+      "frontend_tsconfig_compileroptions_strict",
+      "frontend_tsconfig_compileroptions_target",
+      "frontend_tsconfig_exclude",
+      "frontend_tsconfig_include",
+      "frontend_tsconfig_paths_backend",
+      "frontend_tsconfig_paths_zod"
+    ],
+    "4": [
+      "backend_src_catalog_catalog_data_listproducts",
+      "frontend_app_catalogo_page",
+      "frontend_app_catalogo_page_catalogpage",
+      "frontend_app_catalogo_page_metadata",
+      "frontend_app_checkout_page",
+      "frontend_app_checkout_page_checkoutpage",
+      "frontend_app_login_page",
+      "frontend_app_login_page_loginpage",
+      "frontend_app_login_page_metadata",
+      "frontend_app_robots",
+      "frontend_app_robots_robots",
+      "frontend_components_catalog_catalog_view_catalogview",
+      "frontend_components_site_footer",
+      "frontend_components_site_footer_sitefooter",
+      "frontend_next_config",
+      "frontend_next_config_nextconfig",
+      "ref_next"
+    ],
+    "5": [
+      "frontend_package_devdependencies",
+      "frontend_package_devdependencies_autoprefixer",
+      "frontend_package_devdependencies_eslint",
+      "frontend_package_devdependencies_eslint_config_next",
+      "frontend_package_devdependencies_jsdom",
+      "frontend_package_devdependencies_playwright_test",
+      "frontend_package_devdependencies_postcss",
+      "frontend_package_devdependencies_prisma",
+      "frontend_package_devdependencies_tailwindcss",
+      "frontend_package_devdependencies_testing_library_jest_dom",
+      "frontend_package_devdependencies_testing_library_react",
+      "frontend_package_devdependencies_types_node",
+      "frontend_package_devdependencies_types_react",
+      "frontend_package_devdependencies_types_react_dom",
+      "frontend_package_devdependencies_typescript",
+      "frontend_package_devdependencies_vitest"
+    ],
+    "6": [
+      "frontend_app_recuperar_page",
+      "frontend_app_recuperar_page_metadata",
+      "frontend_app_recuperar_page_recoverpage",
+      "frontend_app_registro_page",
+      "frontend_app_registro_page_metadata",
+      "frontend_app_registro_page_signuppage",
+      "frontend_components_auth_login_form",
+      "frontend_components_auth_login_form_loginform",
+      "frontend_components_auth_recover_form",
+      "frontend_components_auth_recover_form_recoverform",
+      "frontend_components_auth_signup_form",
+      "frontend_components_auth_signup_form_signupform",
+      "frontend_lib_supabase_browser",
+      "frontend_lib_supabase_browser_createsupabasebrowserclient",
+      "ref_react"
+    ],
+    "7": [
+      "backend_src_http_api_response",
+      "backend_src_http_api_response_apierror",
+      "backend_src_http_api_response_fail",
+      "backend_src_http_api_response_ok",
+      "backend_src_validation_catalog",
+      "backend_src_validation_catalog_catalogqueryschema",
+      "frontend_app_api_checkout_route",
+      "frontend_app_api_checkout_route_post",
+      "frontend_app_api_payments_webhook_route",
+      "frontend_app_api_payments_webhook_route_post",
+      "frontend_app_api_products_route",
+      "frontend_app_api_products_route_get"
+    ],
+    "8": [
+      "frontend_package_scripts",
+      "frontend_package_scripts_build",
+      "frontend_package_scripts_dev",
+      "frontend_package_scripts_e2e",
+      "frontend_package_scripts_lint",
+      "frontend_package_scripts_prisma_generate",
+      "frontend_package_scripts_prisma_migrate",
+      "frontend_package_scripts_start",
+      "frontend_package_scripts_test",
+      "frontend_package_scripts_test_watch",
+      "frontend_package_scripts_typecheck"
+    ],
+    "9": [
+      "frontend_package_dependencies",
+      "frontend_package_dependencies_next",
+      "frontend_package_dependencies_phosphor_icons_react",
+      "frontend_package_dependencies_prisma_client",
+      "frontend_package_dependencies_react",
+      "frontend_package_dependencies_react_dom",
+      "frontend_package_dependencies_supabase_ssr",
+      "frontend_package_dependencies_supabase_supabase_js",
+      "frontend_package_dependencies_zod"
+    ],
+    "10": [
+      "backend_package",
+      "backend_package_dependencies",
+      "backend_package_dependencies_zod",
+      "backend_package_description",
+      "backend_package_json_ref_zod",
+      "backend_package_name",
+      "backend_package_private",
+      "backend_package_version"
+    ],
+    "11": [
+      "frontend_app_layout",
+      "frontend_app_layout_dmsans",
+      "frontend_app_layout_metadata",
+      "frontend_app_layout_rootlayout",
+      "frontend_app_layout_spacegrotesk",
+      "frontend_components_cart_cart_provider_cartprovider"
+    ],
+    "12": [
+      "frontend_app_api_health_route",
+      "frontend_app_api_health_route_get"
+    ],
+    "13": [
+      "frontend_app_contacto_page",
+      "frontend_app_contacto_page_contactpage"
+    ],
+    "14": [
+      "frontend_app_devoluciones_page",
+      "frontend_app_devoluciones_page_returnspage"
+    ],
+    "15": [
+      "frontend_app_envios_page",
+      "frontend_app_envios_page_shippingpage"
+    ],
+    "16": [
+      "frontend_app_not_found",
+      "frontend_app_not_found_notfound"
+    ],
+    "17": [
+      "frontend_app_preguntas_page",
+      "frontend_app_preguntas_page_questionspage"
+    ],
+    "18": [
+      "frontend_app_privacidad_page",
+      "frontend_app_privacidad_page_privacypage"
+    ],
+    "19": [
+      "frontend_app_terminos_page",
+      "frontend_app_terminos_page_termspage"
+    ],
+    "20": [
+      "frontend_eslint_config",
+      "frontend_eslint_config_config"
+    ],
+    "21": [
+      "frontend_next_env_d",
+      "frontend_next_env_d_rationale_6"
+    ],
+    "22": [
+      "frontend_postcss_config",
+      "postcss_load_config"
+    ],
+    "23": [
+      "frontend_tests_setup"
+    ],
+    "24": [
+      "frontend_vitest_config"
+    ]
+  },
+  "cohesion": {
+    "0": 0.12233285917496443,
+    "1": 0.06666666666666667,
+    "2": 0.14461538461538462,
+    "3": 0.09523809523809523,
+    "4": 0.15441176470588236,
+    "5": 0.125,
+    "6": 0.22857142857142856,
+    "7": 0.36363636363636365,
+    "8": 0.18181818181818182,
+    "9": 0.2222222222222222,
+    "10": 0.25,
+    "11": 0.3333333333333333,
+    "12": 1.0,
+    "13": 1.0,
+    "14": 1.0,
+    "15": 1.0,
+    "16": 1.0,
+    "17": 1.0,
+    "18": 1.0,
+    "19": 1.0,
+    "20": 1.0,
+    "21": 1.0,
+    "22": 1.0,
+    "23": 1.0,
+    "24": 1.0
+  },
+  "gods": [
+    {
+      "id": "frontend_tsconfig_compileroptions",
+      "label": "compilerOptions",
+      "degree": 16
+    },
+    {
+      "id": "backend_src_payments_mock_provider_mockpaymentprovider",
+      "label": "MockPaymentProvider",
+      "degree": 11
+    },
+    {
+      "id": "frontend_package_scripts",
+      "label": "scripts",
+      "degree": 11
+    },
+    {
+      "id": "ref_next",
+      "label": "next",
+      "degree": 11
+    },
+    {
+      "id": "backend_src_checkout_checkout_service_createmockcheckout",
+      "label": "createMockCheckout()",
+      "degree": 9
+    },
+    {
+      "id": "frontend_components_cart_cart_provider_usecart",
+      "label": "useCart()",
+      "degree": 9
+    },
+    {
+      "id": "ref_phosphor_icons_react",
+      "label": "@phosphor-icons/react",
+      "degree": 9
+    },
+    {
+      "id": "ref_react",
+      "label": "react",
+      "degree": 9
+    },
+    {
+      "id": "frontend_components_site_header_siteheader",
+      "label": "SiteHeader()",
+      "degree": 8
+    },
+    {
+      "id": "backend_src_http_api_response_ok",
+      "label": "ok()",
+      "degree": 7
+    }
+  ],
+  "surprises": [
+    {
+      "source": "GET()",
+      "target": "listProducts()",
+      "source_files": [
+        "frontend/app/api/products/route.ts",
+        "backend/src/catalog/catalog-data.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "CatalogPage()",
+      "target": "listProducts()",
+      "source_files": [
+        "frontend/app/catalogo/page.tsx",
+        "backend/src/catalog/catalog-data.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; peripheral node `CatalogPage()` unexpectedly reaches hub `listProducts()`"
+    },
+    {
+      "source": "generateMetadata()",
+      "target": "getProductBySlug()",
+      "source_files": [
+        "frontend/app/producto/[slug]/page.tsx",
+        "backend/src/catalog/catalog-data.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; peripheral node `generateMetadata()` unexpectedly reaches hub `getProductBySlug()`"
+    },
+    {
+      "source": "ProductPage()",
+      "target": "getProductBySlug()",
+      "source_files": [
+        "frontend/app/producto/[slug]/page.tsx",
+        "backend/src/catalog/catalog-data.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; peripheral node `ProductPage()` unexpectedly reaches hub `getProductBySlug()`"
+    },
+    {
+      "source": "POST()",
+      "target": "createMockCheckout()",
+      "source_files": [
+        "frontend/app/api/checkout/route.ts",
+        "backend/src/checkout/checkout-service.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; bridges separate communities"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `next` connect `catalogo/page.tsx` to `catalog-data.ts`, `frontend/package.json`, `layout.tsx`, `react`?",
+      "why": "High betweenness centrality (0.172) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `devDependencies` connect `devDependencies` to `frontend/package.json`?",
+      "why": "High betweenness centrality (0.096) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `react` connect `react` to `catalog-data.ts`, `frontend/package.json`?",
+      "why": "High betweenness centrality (0.067) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `name`, `version`, `private` to the rest of the system?",
+      "why": "95 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `catalog-data.ts` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.12233285917496443 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `frontend/package.json` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.06666666666666667 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `checkout-service.ts` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.14461538461538462 - nodes in this community are weakly interconnected."
+    }
+  ]
+}
