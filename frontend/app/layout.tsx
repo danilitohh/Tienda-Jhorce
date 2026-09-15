@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Space_Grotesk } from "next/font/google";
 import { CartProvider } from "@/components/cart/cart-provider";
+import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk", display: "swap" });
@@ -8,7 +9,7 @@ const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans", display
 
 // Global metadata establishes the base SEO contract for the Vercel deployment.
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: getSiteUrl(),
   title: { default: "Jhorce | Viste lo que te mueve", template: "%s | Jhorce" },
   description: "Esenciales contemporáneos para moverte con libertad. Diseñados en Colombia.",
   openGraph: { title: "Jhorce | Viste lo que te mueve", description: "Prendas y accesorios con intención.", type: "website" },
