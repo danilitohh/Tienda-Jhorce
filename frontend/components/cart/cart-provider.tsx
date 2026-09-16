@@ -3,19 +3,25 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { StoreProduct } from "@backend/catalog/catalog-data";
 
-export type CartItem = { product: StoreProduct; quantity: number };
+export type CartSelection = { size?: string; color?: string };
+export type CartItem = CartSelection & { product: StoreProduct; quantity: number };
 
 type CartContextValue = {
   items: CartItem[];
   itemCount: number;
   subtotal: number;
-  addItem: (product: StoreProduct) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  removeItem: (productId: string) => void;
+  addItem: (product: StoreProduct, selection?: CartSelection) => void;
+  updateQuantity: (itemKey: string, quantity: number) => void;
+  removeItem: (itemKey: string) => void;
   clearCart: () => void;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
+
+// Keep variant-specific lines separate without changing the product or checkout identifiers.
+export function getCartItemKey(item: CartItem | CartSelection & { product: Pick<StoreProduct, "id"> }): string {
+  return `${item.product.id}:${item.size ?? ""}:${item.color ?? ""}`;
+}
 
 // Persist the lightweight cart locally while keeping server recalculation as the checkout authority.
 export function CartProvider({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -37,17 +43,19 @@ export function CartProvider({ children }: Readonly<{ children: React.ReactNode 
   useEffect(() => { window.localStorage.setItem("jhorce-cart", JSON.stringify(items)); }, [items]);
 
   // Add one unit or increment the existing line without exceeding a practical cart limit.
-  const addItem = (product: StoreProduct) => setItems((current) => {
-    const existing = current.find((item) => item.product.id === product.id);
-    if (existing) return current.map((item) => item.product.id === product.id ? { ...item, quantity: Math.min(item.quantity + 1, 20) } : item);
-    return [...current, { product, quantity: 1 }];
+  const addItem = (product: StoreProduct, selection: CartSelection = {}) => setItems((current) => {
+    const nextItem = { product, quantity: 1, ...selection };
+    const itemKey = getCartItemKey(nextItem);
+    const existing = current.find((item) => getCartItemKey(item) === itemKey);
+    if (existing) return current.map((item) => getCartItemKey(item) === itemKey ? { ...item, quantity: Math.min(item.quantity + 1, 20) } : item);
+    return [...current, nextItem];
   });
 
-  // Keep quantity controls predictable and remove a line when it reaches zero.
-  const updateQuantity = (productId: string, quantity: number) => setItems((current) => current.map((item) => item.product.id === productId ? { ...item, quantity: Math.max(0, Math.min(quantity, 20)) } : item).filter((item) => item.quantity > 0));
+  // Keep quantity controls predictable and remove a selected line when it reaches zero.
+  const updateQuantity = (itemKey: string, quantity: number) => setItems((current) => current.map((item) => getCartItemKey(item) === itemKey ? { ...item, quantity: Math.max(0, Math.min(quantity, 20)) } : item).filter((item) => item.quantity > 0));
 
-  // Remove one product line from the local cart.
-  const removeItem = (productId: string) => setItems((current) => current.filter((item) => item.product.id !== productId));
+  // Remove one selected product line from the local cart.
+  const removeItem = (itemKey: string) => setItems((current) => current.filter((item) => getCartItemKey(item) !== itemKey));
 
   // Reset the local cart after an order is successfully created.
   const clearCart = () => setItems([]);

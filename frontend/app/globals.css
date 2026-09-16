@@ -4,43 +4,60 @@
 
 :root {
   color-scheme: light;
-  --ink: #111318;
-  --paper: #f7f8fa;
-  --muted: #667085;
-  --accent: #2855ff;
+  --ink: #241c17;
+  --paper: #fbf8f3;
+  --surface: #ffffff;
+  --sand: #ede3d5;
+  --accent: #dda210;
+  --accent-deep: #8a6500;
+  --muted: #74685e;
+  --success: #2f6b48;
+  --danger: #b9382f;
+  --warning: #916c0f;
 }
 
 * { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }
 
-body { margin: 0; background: var(--paper); }
+body { margin: 0; background: var(--paper); color: var(--ink); }
 
-::selection { background: var(--accent); color: #fff; }
+::selection { background: var(--accent); color: var(--ink); }
 
 button, a, input, select { -webkit-tap-highlight-color: transparent; }
 
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
-  outline: 3px solid rgba(40, 85, 255, 0.35);
+  outline: 3px solid rgba(138, 101, 0, 0.42);
   outline-offset: 3px;
 }
 
-/* The hero orbit is a deliberately restrained brand motion with a reduced-motion fallback. */
-@keyframes drift {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-  50% { transform: translate3d(18px, -12px, 0) rotate(6deg); }
+@layer components {
+  /* Shared container keeps every route aligned to the same 1280px editorial grid. */
+  .site-shell { @apply mx-auto w-full max-w-[1280px] px-5 sm:px-8 lg:px-10; }
+
+  /* Eyebrows provide a restrained section hierarchy without decorative numbering. */
+  .eyebrow { @apply text-[0.68rem] font-bold uppercase tracking-[0.18em] text-accent-deep; }
+
+  /* Display headings use the supplied serif direction while body copy remains practical. */
+  .section-title { @apply font-display text-4xl font-semibold leading-[0.95] tracking-[-0.03em] text-ink sm:text-5xl; }
+
+  /* Primary and secondary actions share shape, focus and tactile feedback across the store. */
+  .button-primary { @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-[9px] bg-ink px-5 py-3 text-sm font-semibold text-white transition duration-200 hover:bg-accent-deep active:translate-y-px; }
+  .button-secondary { @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-[9px] border border-ink/20 bg-transparent px-5 py-3 text-sm font-semibold text-ink transition duration-200 hover:border-ink hover:bg-white active:translate-y-px; }
+
+  /* Form fields keep labels, contrast and focus treatment consistent on auth and checkout screens. */
+  .field-input { @apply min-h-12 rounded-[8px] border border-ink/15 bg-white px-3 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-accent-deep focus:ring-2 focus:ring-accent/20; }
+
+  /* Soft panels establish hierarchy without the heavy shadow and card stacking of the old UI. */
+  .surface-panel { @apply rounded-[10px] border border-ink/10 bg-white; }
 }
 
-@keyframes pulse-ring {
-  0%, 100% { opacity: .24; transform: scale(.92); }
-  50% { opacity: .52; transform: scale(1); }
+/* Keep the only automatic motion subtle and remove it completely for reduced-motion users. */
+@media (prefers-reduced-motion: no-preference) {
+  a, button, input, select { transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
 }
-
-.animate-drift { animation: drift 8s ease-in-out infinite; }
-.animate-pulse-ring { animation: pulse-ring 5s ease-in-out infinite; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
-
