@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-// Centralize the byjhor palette so every storefront surface shares the same visual language.
+// Centralize the byjhor palette so every storefront surface shares the same warm yellow language.
 const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "../backend/src/**/*.{ts,tsx}"],
   theme: {
@@ -10,16 +10,22 @@ const config: Config = {
         paper: "#FBF8F3",
         mist: "#EDE3D5",
         sand: "#EDE3D5",
-        accent: "#DDA210",
-        "accent-deep": "#8A6500",
-        teal: "#006B67",
-        "teal-deep": "#00504D",
-        coral: "#E35D47",
-        "coral-deep": "#B84132",
-        sun: "#F4BF3C",
-        "sun-deep": "#D99B16",
-        blush: "#F4D4CF",
-        sage: "#D8E6DD",
+        gold: "#E3AE16",
+        "gold-deep": "#8F6800",
+        "gold-soft": "#F5E6A9",
+        "gold-pale": "#FFF5D4",
+        "warm-line": "#E7DDC5",
+        // Compatibility aliases keep existing account, catalog and checkout states on the new yellow system.
+        accent: "#E3AE16",
+        "accent-deep": "#8F6800",
+        teal: "#8F6800",
+        "teal-deep": "#6F4F00",
+        coral: "#E3AE16",
+        "coral-deep": "#B77B00",
+        sun: "#E3AE16",
+        "sun-deep": "#8F6800",
+        blush: "#FFF5D4",
+        sage: "#F5E6A9",
         muted: "#74685E",
         success: "#2F6B48",
         danger: "#B9382F",

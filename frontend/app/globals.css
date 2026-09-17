@@ -4,21 +4,16 @@
 
 :root {
   color-scheme: light;
-  --ink: #241c17;
-  --paper: #fbf8f3;
-  --surface: #ffffff;
-  --sand: #ede3d5;
-  --accent: #dda210;
-  --accent-deep: #8a6500;
-  --teal: #006b67;
-  --teal-deep: #00504d;
-  --coral: #e35d47;
-  --coral-deep: #b84132;
-  --sun: #f4bf3c;
-  --sun-deep: #d99b16;
-  --blush: #f4d4cf;
-  --sage: #d8e6dd;
-  --muted: #74685e;
+  --ink: #211a12;
+  --paper: #fcfaf4;
+  --surface: #fffefb;
+  --sand: #f0e7d0;
+  --gold: #e3ae16;
+  --gold-deep: #8f6800;
+  --gold-soft: #f5e6a9;
+  --gold-pale: #fff5d4;
+  --warm-line: #e7ddc5;
+  --muted: #746b5d;
   --success: #2f6b48;
   --danger: #b9382f;
   --warning: #916c0f;
@@ -30,33 +25,33 @@ html { scroll-behavior: smooth; }
 
 body { margin: 0; background: var(--paper); color: var(--ink); }
 
-::selection { background: var(--accent); color: var(--ink); }
+::selection { background: var(--gold); color: var(--ink); }
 
 button, a, input, select { -webkit-tap-highlight-color: transparent; }
 
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
-  outline: 3px solid rgba(0, 107, 103, 0.42);
+  outline: 3px solid rgba(143, 104, 0, 0.42);
   outline-offset: 3px;
 }
 
 @layer components {
-  /* Shared container keeps every route aligned to the same 1280px editorial grid. */
-  .site-shell { @apply mx-auto w-full max-w-[1760px] px-5 sm:px-8 lg:px-10; }
+  /* Shared container keeps every route aligned to a calm, wide editorial grid. */
+  .site-shell { @apply mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-10; }
 
-  /* Eyebrows provide a restrained section hierarchy without decorative numbering. */
-  .eyebrow { @apply text-[0.68rem] font-bold uppercase tracking-[0.18em] text-teal; }
+  /* Small labels use the single brand accent to create a restrained wayfinding hierarchy. */
+  .eyebrow { @apply text-[0.68rem] font-bold uppercase tracking-[0.18em] text-gold-deep; }
 
   /* Display headings use the supplied serif direction while body copy remains practical. */
   .section-title { @apply font-display text-4xl font-semibold leading-[0.95] tracking-[-0.03em] text-ink sm:text-5xl; }
 
   /* Primary and secondary actions share shape, focus and tactile feedback across the store. */
-  .button-primary { @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-[9px] bg-sun px-5 py-3 text-sm font-semibold text-ink transition duration-200 hover:bg-sun-deep active:translate-y-px; }
-  .button-secondary { @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-[9px] border border-ink/20 bg-transparent px-5 py-3 text-sm font-semibold text-ink transition duration-200 hover:border-teal hover:bg-white hover:text-teal active:translate-y-px; }
+  .button-primary { @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-[6px] bg-gold px-5 py-3 text-sm font-semibold text-ink transition duration-200 hover:bg-gold-deep hover:text-white active:translate-y-px; }
+  .button-secondary { @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-[6px] border border-ink/20 bg-transparent px-5 py-3 text-sm font-semibold text-ink transition duration-200 hover:border-gold-deep hover:bg-gold-pale hover:text-gold-deep active:translate-y-px; }
 
   /* Form fields keep labels, contrast and focus treatment consistent on auth and checkout screens. */
-  .field-input { @apply min-h-12 rounded-[8px] border border-ink/15 bg-white px-3 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-teal focus:ring-2 focus:ring-teal/20; }
+  .field-input { @apply min-h-12 rounded-[6px] border border-ink/15 bg-white px-3 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-gold-deep focus:ring-2 focus:ring-gold/20; }
 
-  /* Soft panels establish hierarchy without the heavy shadow and card stacking of the old UI. */
+  /* Quiet panels establish hierarchy without heavy shadows or decorative stacking. */
   .surface-panel { @apply rounded-[10px] border border-ink/10 bg-white; }
 }
 
