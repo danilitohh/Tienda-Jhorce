@@ -11,8 +11,8 @@ const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans", display
 export const metadata: Metadata = {
   metadataBase: getSiteUrl(),
   title: { default: "byjhor | Tu esencia. Tu estilo.", template: "%s | byjhor" },
-  description: "Prendas y accesorios para expresarte a tu manera.",
-  openGraph: { title: "byjhor | Tu esencia. Tu estilo.", description: "Prendas y accesorios para expresarte a tu manera.", type: "website" },
+  description: "Pelucas y accesorios para expresar tu estilo a tu manera.",
+  openGraph: { title: "byjhor | Tu esencia. Tu estilo.", description: "Pelucas y accesorios para expresar tu estilo a tu manera.", type: "website" },
 };
 
 // The root layout owns font loading and the cart context shared by all storefront surfaces.

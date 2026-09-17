@@ -3,7 +3,7 @@ import { CartSummary } from "@/components/cart/cart-summary";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
-export const metadata: Metadata = { title: "Carrito", description: "Revisa tus piezas byjhor antes de continuar." };
+export const metadata: Metadata = { title: "Carrito", description: "Revisa tus pelucas y accesorios byjhor antes de continuar." };
 
 // Keep the cart route intentionally calm and task-focused, without marketing motion.
 export default function CartPage() {

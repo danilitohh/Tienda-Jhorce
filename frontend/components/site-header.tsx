@@ -5,11 +5,13 @@ import { Bag, List, MagnifyingGlass, X } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useCart } from "@/components/cart/cart-provider";
 import { BrandLogo } from "@/components/brand/brand-logo";
+import { categoryLabels } from "@/lib/catalog-labels";
 
 const navLinks = [
   { label: "Tienda", href: "/catalogo" },
-  { label: "Movimiento", href: "/catalogo?category=Movimiento" },
-  { label: "Accesorios", href: "/catalogo?category=Accesorios" },
+  { label: categoryLabels.Esenciales, href: "/catalogo?category=Esenciales" },
+  { label: categoryLabels.Movimiento, href: "/catalogo?category=Movimiento" },
+  { label: categoryLabels.Accesorios, href: "/catalogo?category=Accesorios" },
   { label: "Sobre byjhor", href: "/#historia" },
 ] as const;
 
