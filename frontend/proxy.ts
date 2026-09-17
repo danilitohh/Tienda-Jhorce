@@ -15,11 +15,10 @@ export async function proxy(request: NextRequest) {
     },
   });
 
-  // Calling getUser refreshes the token when necessary and keeps server/client auth state aligned.
-  await supabase.auth.getUser();
+  // Verified claims refresh the token when needed and avoid trusting raw session-cookie user data.
+  await supabase.auth.getClaims();
   return response;
 }
 
 // Exclude static assets, metadata files and API handlers from session refresh work.
 export const config = { matcher: ["/((?!_next/static|_next/image|favicon.ico|icon.svg|sitemap.xml|robots.txt|api/).*)"] };
-

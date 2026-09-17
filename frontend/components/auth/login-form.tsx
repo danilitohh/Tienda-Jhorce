@@ -3,14 +3,21 @@
 import Link from "next/link";
 import { ArrowRight, Check, LockKey } from "@phosphor-icons/react";
 import { FormEvent, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 // Login form delegates credential handling to Supabase Auth and stays usable in demo mode without env values.
 export function LoginForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Only retain same-site destinations to prevent an authentication redirect from leaving byjhor.
+  const requestedPath = searchParams.get("next");
+  const nextPath = requestedPath?.startsWith("/") && !requestedPath.startsWith("//") ? requestedPath : null;
 
   // Sign in securely through Supabase Auth without handling passwords in application code.
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -20,7 +27,9 @@ export function LoginForm() {
     const supabase = createSupabaseBrowserClient();
     if (!supabase) { setStatus("Configura Supabase para activar el acceso. La tienda demo sigue disponible."); setLoading(false); return; }
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setStatus(error ? "No pudimos iniciar sesión. Revisa tus datos e inténtalo de nuevo." : "Sesión iniciada. Ya puedes continuar con tu compra.");
+    if (error) setStatus("No pudimos iniciar sesión. Revisa tus datos e inténtalo de nuevo.");
+    else if (nextPath) router.replace(nextPath);
+    else setStatus("Sesión iniciada. Ya puedes continuar con tu compra.");
     setLoading(false);
   };
 
