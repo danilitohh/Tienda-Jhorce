@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { List, X } from "@phosphor-icons/react";
+import { List, User, X } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useCart } from "@/components/cart/cart-provider";
 import { BrandLogo } from "@/components/brand/brand-logo";
@@ -16,28 +16,38 @@ const navLinks = [
   { label: "Sobre ByJhor", href: "/#historia" },
 ] as const;
 
-// The header keeps navigation quiet and legible while preserving the real account and cart flows.
+// The header follows a mobile-first commerce pattern while preserving every existing destination.
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const { itemCount } = useCart();
 
   return (
     <header className="sticky top-0 z-30 border-b border-ink/10 bg-paper/95 backdrop-blur">
-      <div className="site-shell flex min-h-24 items-center justify-between">
-        <Link href="/" aria-label="byjhor, inicio" className="shrink-0">
-          <BrandLogo priority />
-        </Link>
-        <nav className="hidden items-center gap-5 text-sm font-medium xl:flex 2xl:gap-7" aria-label="Navegación principal">
-          {navLinks.map((link) => <Link key={link.href} href={link.href} className="text-ink/75 transition-colors hover:text-gold-deep">{link.label}</Link>)}
-        </nav>
+      <div className="border-b border-gold-deep/20 bg-gold text-center text-xs font-semibold text-ink sm:text-sm">
+        <p className="site-shell py-2">Envío gratis desde $250.000</p>
+      </div>
+      <div className="site-shell grid min-h-16 grid-cols-[1fr_auto_1fr] items-center gap-3 sm:min-h-20 xl:flex xl:justify-between">
         <div className="flex items-center gap-1 sm:gap-2">
+          <button className="rounded-[6px] p-2 text-ink transition-colors hover:bg-gold-pale hover:text-gold-deep xl:hidden" aria-label={open ? "Cerrar menú" : "Abrir menú"} aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen((current) => !current)}>{open ? <X size={22} /> : <List size={24} />}</button>
+          <Link className="rounded-[6px] p-2 text-ink transition-colors hover:bg-gold-pale hover:text-gold-deep xl:hidden" href="/login" aria-label="Mi cuenta"><User size={22} weight="light" /></Link>
+          <Link href="/" aria-label="byjhor, inicio" className="hidden shrink-0 xl:block"><BrandLogo priority /></Link>
+        </div>
+        <Link href="/" aria-label="byjhor, inicio" className="shrink-0 xl:hidden"><BrandLogo priority className="h-11 w-28 sm:h-12 sm:w-32" /></Link>
+        <nav className="hidden items-center gap-7 text-sm font-medium xl:flex" aria-label="Navegación principal">
+          {navLinks.map((link) => <Link key={link.href} href={link.href} className="text-ink/80 transition-colors hover:text-gold-deep">{link.label}</Link>)}
+        </nav>
+        <div className="flex items-center justify-end gap-1 sm:gap-2">
           <Link href="/catalogo" className="rounded-[6px] p-2 text-ink transition-colors hover:bg-gold-pale hover:text-gold-deep" aria-label="Buscar productos"><StoreSearchIcon size={21} /></Link>
-          <Link className="hidden rounded-[6px] p-2 text-ink transition-colors hover:bg-gold-pale hover:text-gold-deep sm:block" href="/login" aria-label="Mi cuenta"><span className="text-sm font-medium">Cuenta</span></Link>
+          <Link className="hidden rounded-[6px] p-2 text-ink transition-colors hover:bg-gold-pale hover:text-gold-deep sm:flex sm:items-center sm:gap-2" href="/login" aria-label="Mi cuenta"><User size={20} weight="light" /><span className="hidden text-sm font-medium 2xl:inline">Cuenta</span></Link>
           <Link className="relative rounded-[6px] p-2 text-ink transition-colors hover:bg-gold-pale hover:text-gold-deep" href="/carrito" aria-label={`Carrito con ${itemCount} productos`}><StoreBagIcon size={23} />{itemCount > 0 && <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-gold-deep px-1 text-[10px] font-bold text-white">{itemCount}</span>}</Link>
-          <button className="rounded-[6px] p-2 text-ink transition-colors hover:bg-gold-pale hover:text-gold-deep xl:hidden" aria-label={open ? "Cerrar menú" : "Abrir menú"} aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen((current) => !current)}>{open ? <X size={21} /> : <List size={21} />}</button>
         </div>
       </div>
-      {open && <nav id="mobile-navigation" className="border-t border-ink/10 bg-paper xl:hidden" aria-label="Navegación móvil"><div className="site-shell grid gap-1 py-3 text-sm"><Link className="rounded-[6px] px-3 py-3 hover:bg-gold-pale" href="/login" onClick={() => setOpen(false)}>Cuenta</Link>{navLinks.map((link) => <Link key={link.href} className="rounded-[6px] px-3 py-3 hover:bg-gold-pale" href={link.href} onClick={() => setOpen(false)}>{link.label}</Link>)}</div></nav>}
+      <nav className="border-t border-ink/10 bg-paper xl:hidden" aria-label="Categorías">
+        <div className="site-shell flex gap-6 overflow-x-auto py-3 text-xs font-medium whitespace-nowrap [scrollbar-width:none]">
+          {navLinks.slice(0, 4).map((link) => <Link key={link.href} href={link.href} className="text-ink/75 transition-colors hover:text-gold-deep">{link.label}</Link>)}
+        </div>
+      </nav>
+      {open && <nav id="mobile-navigation" className="border-t border-ink/10 bg-paper xl:hidden" aria-label="Menú"><div className="site-shell grid gap-1 py-3 text-sm"><Link className="rounded-[6px] px-3 py-3 hover:bg-gold-pale" href="/login" onClick={() => setOpen(false)}>Cuenta</Link>{navLinks.map((link) => <Link key={link.href} className="rounded-[6px] px-3 py-3 hover:bg-gold-pale" href={link.href} onClick={() => setOpen(false)}>{link.label}</Link>)}</div></nav>}
     </header>
   );
 }
