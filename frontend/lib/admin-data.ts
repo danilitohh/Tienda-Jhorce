@@ -39,8 +39,9 @@ export class AdminDataError extends Error {
 export async function listAdminProducts(): Promise<AdminProduct[]> {
   const collection = await getCatalogCollection();
   if (!collection) throw new AdminDataError("UNAVAILABLE", "MongoDB no está configurado para el catálogo.");
-  const documents = await collection.find({ deletedAt: { $exists: false } }).sort({ updatedAt: -1, createdAt: -1 }).limit(100).toArray();
-  return documents.map(mapCatalogProduct);
+  const documents = await collection.find({ deletedAt: { $exists: false } }).limit(1).toArray();
+  if (!documents.length) await importMissingCatalogProducts(collection);
+  return readAdminProducts(collection);
 }
 
 // Insert a product with server-owned identifiers, timestamps and operational defaults.
@@ -68,10 +69,7 @@ function createInitialCatalogDocument(product: StoreProduct, now: Date): Documen
 function isDuplicateKeyError(error: unknown) { return typeof error === "object" && error !== null && Reflect.get(error, "code") === 11000; }
 
 // Copy only missing local catalog products into MongoDB; existing documents are never overwritten by this bootstrap action.
-export async function importInitialCatalog() {
-  const collection = await getCatalogCollection();
-  if (!collection) throw new AdminDataError("UNAVAILABLE", "MongoDB no está configurado para el catálogo.");
-
+async function importMissingCatalogProducts(collection: NonNullable<Awaited<ReturnType<typeof getCatalogCollection>>>) {
   const identityFilters: Document[] = PRODUCTS.flatMap((product) => [{ id: product.id }, { slug: product.slug }]);
   const existingDocuments = await collection.find({ $or: identityFilters } as Document).toArray();
   const existingIds = new Set(existingDocuments.map((document) => mapCatalogProduct(document).id));
@@ -89,7 +87,21 @@ export async function importInitialCatalog() {
     }
   }
 
-  return { imported: missingDocuments.length, products: await listAdminProducts() };
+  return missingDocuments.length;
+}
+
+// Read the canonical admin projection after the optional bootstrap has completed.
+async function readAdminProducts(collection: NonNullable<Awaited<ReturnType<typeof getCatalogCollection>>>) {
+  const documents = await collection.find({ deletedAt: { $exists: false } }).sort({ updatedAt: -1, createdAt: -1 }).limit(100).toArray();
+  return documents.map(mapCatalogProduct);
+}
+
+// Keep the admin recovery endpoint available while the normal dashboard load performs this bootstrap automatically.
+export async function importInitialCatalog() {
+  const collection = await getCatalogCollection();
+  if (!collection) throw new AdminDataError("UNAVAILABLE", "MongoDB no está configurado para el catálogo.");
+  const imported = await importMissingCatalogProducts(collection);
+  return { imported, products: await readAdminProducts(collection) };
 }
 
 // Update only validated product fields and keep the existing document identity stable for carts and links.
