@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { List, Truck, User, X } from "@phosphor-icons/react";
+import { List, Truck, X } from "@phosphor-icons/react";
 import { Fragment, useState } from "react";
+import { AccountLink } from "@/components/auth/account-link";
 import { useCart } from "@/components/cart/cart-provider";
 import { BrandLogo } from "@/components/brand/brand-logo";
 import { StoreBagIcon, StoreSearchIcon } from "@/components/ui/store-icons";
@@ -29,7 +30,7 @@ export function SiteHeader() {
       <div className="site-shell grid min-h-16 grid-cols-[1fr_auto_1fr] items-center gap-3 sm:min-h-20 xl:flex xl:justify-between">
         <div className="flex items-center gap-1 sm:gap-2">
           <button className="rounded-[6px] p-2 text-ink transition-colors hover:bg-gold-pale hover:text-gold-deep xl:hidden" aria-label={open ? "Cerrar menú" : "Abrir menú"} aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen((current) => !current)}>{open ? <X size={22} /> : <List size={24} />}</button>
-          <Link className="rounded-[6px] p-2 text-ink transition-colors hover:bg-gold-pale hover:text-gold-deep xl:hidden" href="/login" aria-label="Mi cuenta"><User size={22} weight="light" /></Link>
+          <AccountLink compact className="rounded-[6px] p-2 text-ink transition-colors hover:bg-gold-pale hover:text-gold-deep xl:hidden" />
           <Link href="/" aria-label="byjhor, inicio" className="hidden shrink-0 xl:block"><BrandLogo priority /></Link>
         </div>
         <Link href="/" aria-label="byjhor, inicio" className="shrink-0 xl:hidden"><BrandLogo priority className="h-11 w-28 sm:h-12 sm:w-32" /></Link>
@@ -38,7 +39,7 @@ export function SiteHeader() {
         </nav>
         <div className="flex items-center justify-end gap-1 sm:gap-2">
           <Link href="/catalogo" className="rounded-[6px] p-2 text-ink transition-colors hover:bg-gold-pale hover:text-gold-deep" aria-label="Buscar productos"><StoreSearchIcon size={21} /></Link>
-          <Link className="hidden rounded-[6px] p-2 text-ink transition-colors hover:bg-gold-pale hover:text-gold-deep sm:flex sm:items-center sm:gap-2" href="/login" aria-label="Mi cuenta"><User size={20} weight="light" /><span className="hidden text-sm font-medium 2xl:inline">Cuenta</span></Link>
+          <AccountLink className="hidden rounded-[6px] p-2 text-ink transition-colors hover:bg-gold-pale hover:text-gold-deep sm:flex sm:items-center sm:gap-2" />
           <Link className="relative rounded-[6px] p-2 text-ink transition-colors hover:bg-gold-pale hover:text-gold-deep" href="/carrito" aria-label={`Carrito con ${itemCount} productos`}><StoreBagIcon size={23} />{itemCount > 0 && <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-gold-deep px-1 text-[10px] font-bold text-white">{itemCount}</span>}</Link>
         </div>
       </div>
@@ -47,7 +48,7 @@ export function SiteHeader() {
           {navLinks.slice(0, 4).map((link, index) => <Fragment key={link.href}>{index > 0 && <span aria-hidden="true" className="text-gold-deep">•</span>}<Link href={link.href} className="text-ink/75 transition-colors hover:text-gold-deep">{link.label}</Link></Fragment>)}
         </div>
       </nav>
-      {open && <nav id="mobile-navigation" className="border-t border-ink/10 bg-paper xl:hidden" aria-label="Menú"><div className="site-shell grid gap-1 py-3 text-sm"><Link className="rounded-[6px] px-3 py-3 hover:bg-gold-pale" href="/login" onClick={() => setOpen(false)}>Cuenta</Link>{navLinks.map((link) => <Link key={link.href} className="rounded-[6px] px-3 py-3 hover:bg-gold-pale" href={link.href} onClick={() => setOpen(false)}>{link.label}</Link>)}</div></nav>}
+      {open && <nav id="mobile-navigation" className="border-t border-ink/10 bg-paper xl:hidden" aria-label="Menú"><div className="site-shell grid gap-1 py-3 text-sm"><AccountLink showLabel className="flex items-center gap-2 rounded-[6px] px-3 py-3 hover:bg-gold-pale" onNavigate={() => setOpen(false)} />{navLinks.map((link) => <Link key={link.href} className="rounded-[6px] px-3 py-3 hover:bg-gold-pale" href={link.href} onClick={() => setOpen(false)}>{link.label}</Link>)}</div></nav>}
     </header>
   );
 }

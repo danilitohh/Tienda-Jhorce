@@ -13,12 +13,12 @@ const stateCopy: Record<AccessState, Readonly<{ eyebrow: string; title: string; 
   forbidden: {
     eyebrow: "Acceso restringido",
     title: "Esta cuenta no administra byjhor.",
-    description: "Inicia sesión con la cuenta de la dueña o solicita que se le asigne el rol admin desde Supabase.",
+    description: "Inicia sesión con la cuenta de la dueña configurada para administrar byjhor.",
   },
   unavailable: {
     eyebrow: "Datos no disponibles",
     title: "No pudimos cargar la operación.",
-    description: "La sesión está autorizada, pero la conexión administrativa no pudo leer la base de datos. Revisa la configuración de Supabase antes de continuar.",
+    description: "La sesión está autorizada, pero la conexión administrativa no pudo leer MongoDB. Revisa la configuración antes de continuar.",
   },
 };
 
@@ -38,7 +38,7 @@ export function AdminAccessState({ state, message }: Readonly<{ state: AccessSta
           <p className="eyebrow mt-8">{copy.eyebrow}</p>
           <h1 className="mt-4 font-display text-4xl font-semibold leading-[.95] tracking-[-.03em] sm:text-5xl">{copy.title}</h1>
           <p className="mt-5 text-sm leading-7 text-muted">{message ?? copy.description}</p>
-          {state === "not-configured" && <div className="mt-8 rounded-[8px] border border-gold/35 bg-gold-pale/55 p-4 text-xs leading-6 text-ink"><p className="font-semibold">Configuración necesaria</p><ol className="mt-2 list-decimal space-y-1 pl-4 text-muted"><li>Conserva <code className="rounded bg-white px-1 py-0.5 text-ink">MONGODB_URI</code> solo en Vercel.</li><li>Crea o inicia sesión con la cuenta de la dueña.</li><li>Asígnale <code className="rounded bg-white px-1 py-0.5 text-ink">app_metadata.role: &quot;admin&quot;</code> desde el servidor o el panel de Supabase.</li></ol></div>}
+          {state === "not-configured" && <div className="mt-8 rounded-[8px] border border-gold/35 bg-gold-pale/55 p-4 text-xs leading-6 text-ink"><p className="font-semibold">Configuración necesaria</p><ol className="mt-2 list-decimal space-y-1 pl-4 text-muted"><li>Conserva <code className="rounded bg-white px-1 py-0.5 text-ink">MONGODB_URI</code> solo en Vercel.</li><li>Configura <code className="rounded bg-white px-1 py-0.5 text-ink">ADMIN_EMAIL</code> con el correo de la dueña.</li><li>La dueña crea y confirma su cuenta con ese correo para recibir el único rol <code className="rounded bg-white px-1 py-0.5 text-ink">admin</code>.</li></ol></div>}
           <div className="mt-8 flex flex-wrap gap-3">
             {state !== "forbidden" && <Link href="/login?next=/admin" className="button-primary">Iniciar sesión <ArrowRight size={17} /></Link>}
             <Link href="/" className="button-secondary">Volver a la tienda <LockKey size={16} /></Link>

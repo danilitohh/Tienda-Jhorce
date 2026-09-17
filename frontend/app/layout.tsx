@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import { CartProvider } from "@/components/cart/cart-provider";
+import { StoreRealtimeSync } from "@/components/realtime/store-realtime-sync";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
@@ -20,7 +21,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="es" data-scroll-behavior="smooth">
       <body className={`${cormorantGaramond.variable} ${dmSans.variable} bg-paper font-body text-ink antialiased`}>
-        <CartProvider>{children}</CartProvider>
+        <CartProvider><StoreRealtimeSync enabled={Boolean(process.env.ABLY_API_KEY)} />{children}</CartProvider>
       </body>
     </html>
   );

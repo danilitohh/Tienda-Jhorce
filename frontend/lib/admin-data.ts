@@ -57,7 +57,7 @@ function mapOrder(document: WithId<Document>): AdminOrder {
   };
 }
 
-// Query MongoDB only from the server after app_metadata.role has been validated by the admin page.
+// Query MongoDB only from the server after the admin page has validated the session role.
 export async function loadAdminDashboard(): Promise<DashboardResult> {
   const database = await getMongoDatabase();
   if (!database) return { state: "not-configured", message: "Falta MONGODB_URI para leer la operación de la tienda." };

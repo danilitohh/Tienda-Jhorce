@@ -1,5 +1,6 @@
-import { isAdminRole } from "@backend/admin/admin-role";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { isStoreAdmin } from "@backend/auth/role-service";
+import { isMongoAuthConfigured } from "@/lib/auth-data";
+import { getCurrentUser } from "@/lib/auth-session";
 
 export type AdminAccess =
   | Readonly<{ state: "configured"; email: string | null }>
@@ -7,18 +8,13 @@ export type AdminAccess =
   | Readonly<{ state: "signed-out" }>
   | Readonly<{ state: "forbidden" }>;
 
-// Verify signed claims server-side and read only app_metadata, which an end user cannot edit.
+// Resolve the HttpOnly MongoDB session server-side before allowing access to the owner's operations.
 export async function getAdminAccess(): Promise<AdminAccess> {
-  const supabase = await createSupabaseServerClient();
-  if (!supabase) return { state: "not-configured" };
+  if (!isMongoAuthConfigured()) return { state: "not-configured" };
 
-  const { data, error } = await supabase.auth.getClaims();
-  if (error || !data?.claims) return { state: "signed-out" };
+  const user = await getCurrentUser();
+  if (!user) return { state: "signed-out" };
+  if (!isStoreAdmin(user.role)) return { state: "forbidden" };
 
-  const appMetadata = data.claims.app_metadata;
-  const role = typeof appMetadata === "object" && appMetadata ? Reflect.get(appMetadata, "role") : undefined;
-  if (!isAdminRole(role)) return { state: "forbidden" };
-
-  const email = typeof data.claims.email === "string" ? data.claims.email : null;
-  return { state: "configured", email };
+  return { state: "configured", email: user.email };
 }

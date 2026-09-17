@@ -68,7 +68,7 @@ enum JobStatus {
   FAILED
 }
 
-// Supabase Auth owns credentials. This profile stores commerce-specific identity and RBAC data.
+// Legacy planning schema only: MongoDB owns credentials and runtime authorization for this storefront.
 model UserProfile {
   id          String      @id @db.Uuid
   email       String      @unique
@@ -165,7 +165,7 @@ model Product {
   @@index([name])
 }
 
-// Images are stored in Supabase Storage, with position controlling the gallery order.
+// Image storage is provider-agnostic, with position controlling the gallery order.
 model ProductImage {
   id        String   @id @default(uuid()) @db.Uuid
   productId String   @db.Uuid

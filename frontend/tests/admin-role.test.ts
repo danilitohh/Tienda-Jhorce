@@ -1,12 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { ADMIN_ROLE, isAdminRole } from "@backend/admin/admin-role";
+import { getRoleForVerifiedEmail, isStoreAdmin } from "@backend/auth/role-service";
 
-// Authorization accepts only the single owner role and never treats client-editable metadata as elevated access.
+// Authorization accepts only the single owner role and never elevates arbitrary input.
 describe("admin role", () => {
   it("accepts only the configured admin role", () => {
-    expect(isAdminRole(ADMIN_ROLE)).toBe(true);
-    expect(isAdminRole("superadmin")).toBe(false);
-    expect(isAdminRole("ADMIN")).toBe(false);
-    expect(isAdminRole(undefined)).toBe(false);
+    expect(isStoreAdmin("admin")).toBe(true);
+    expect(isStoreAdmin("superadmin")).toBe(false);
+    expect(isStoreAdmin("ADMIN")).toBe(false);
+    expect(isStoreAdmin(undefined)).toBe(false);
+  });
+
+  it("elevates only the configured verified owner email", () => {
+    const previousOwnerEmail = process.env.ADMIN_EMAIL;
+    process.env.ADMIN_EMAIL = "duena@byjhor.com";
+    expect(getRoleForVerifiedEmail("duena@byjhor.com")).toBe("admin");
+    expect(getRoleForVerifiedEmail("cliente@byjhor.com")).toBe("customer");
+    if (previousOwnerEmail === undefined) delete process.env.ADMIN_EMAIL;
+    else process.env.ADMIN_EMAIL = previousOwnerEmail;
   });
 });

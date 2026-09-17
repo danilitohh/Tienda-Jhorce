@@ -1,4 +1,4 @@
-# Jhorce Store
+# byjhor Store
 
 Jhorce is a Next.js App Router storefront prepared for a Colombian e-commerce operation. The codebase keeps the customer-facing application in `frontend/` and the domain, persistence, validation, and payment boundaries in `backend/`.
 
@@ -6,18 +6,18 @@ Jhorce is a Next.js App Router storefront prepared for a Colombian e-commerce op
 
 The first increment contains:
 
-- responsive storefront home, catalog, product detail, login and cart surfaces;
+- responsive storefront home, catalog, product detail, account and cart surfaces;
 - persistent client cart with quantity controls and checkout handoff;
 - local React Bits-style visual components isolated under `frontend/components/react-bits/`;
-- Supabase Auth browser client and an explicit auth-ready login screen;
-- Prisma schema for catalog, inventory, checkout, payments, orders, shipments, promotions, reviews, returns, jobs and audit logs;
+- MongoDB-backed customer authentication with verified email, secure sessions and password recovery;
+- MongoDB admin dashboard data reader plus a legacy Prisma planning schema for future relational imports;
 - Zod input validation, consistent API responses, health check, product API, and a mock payment provider adapter;
 - unit test coverage for pricing and a Playwright smoke flow scaffold;
 - SEO metadata, sitemap and robots routes.
 
 ## Run locally
 
-Requirements: Node.js 20+ and a Supabase project for the database/auth phases.
+Requirements: Node.js 20+, a MongoDB connection provided by Vercel, and a verified Resend sender for customer email.
 
 ```bash
 cd frontend
@@ -26,16 +26,24 @@ copy ..\\.env.example .env.local
 npm run dev
 ```
 
-The storefront runs at `http://localhost:3000`. It renders catalog demo data without a database, so the visual flow can be reviewed before connecting Supabase.
+The storefront runs at `http://localhost:3000`. It renders catalog demo data without a database, while account actions require MongoDB and transactional email configuration.
 
-## Supabase and Prisma
+## MongoDB authentication
 
-1. Create a Supabase project and copy the values into `frontend/.env.local`.
-2. Set `DATABASE_URL` to the Supavisor pooled connection and `DIRECT_URL` to the direct connection.
-3. From `frontend/`, run `npm run prisma:generate` and `npm run prisma:migrate` when the database is ready.
-4. Enable email/password auth and email confirmation in Supabase Auth.
+1. Add `MONGODB_URI` in Vercel. The integration already provides it for this project.
+2. Configure `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, and make sure the sender domain is verified in Resend.
+3. Set `NEXT_PUBLIC_SITE_URL` to the public production URL so email links return to the store.
+4. Set `ADMIN_EMAIL` to the owner's email. After that person registers and confirms the address, they receive the only `admin` role and can enter `/admin`.
 
-Authentication is delegated to Supabase Auth. Prisma models `UserProfile` records separately because Supabase owns password hashing, refresh tokens, email verification and recovery flows.
+Passwords use salted `scrypt` hashes. Browser sessions and email links are opaque random tokens whose SHA-256 digests are stored in MongoDB. Existing Supabase accounts remain untouched, but cannot be migrated automatically because their password hashes are not exportable; invite those customers to register again after a separate, approved migration campaign.
+
+## Tiempo real con Ably
+
+1. Create a restricted Ably API key in the Ably dashboard and add it to Vercel as `ABLY_API_KEY`. Do not expose the root key or add this value to a `NEXT_PUBLIC_` variable.
+2. The browser authenticates through `/api/realtime/token`, which issues a short-lived token with subscribe-only access to the catalog channel. The admin role also receives access to the private admin channel.
+3. `catalog.updated` refreshes storefront server-rendered data. `order.created`, `order.updated`, and `payment.updated` refresh the admin dashboard. Existing checkout preview code does not publish an order event because it does not create a real order yet.
+
+Ably is optional in local development. When `ABLY_API_KEY` is absent, the storefront and admin continue working without a realtime connection. Use one provider only; no Pusher dependency is required.
 
 ## Verification
 
@@ -54,6 +62,6 @@ The Playwright suite expects the dev server to be running or starts it automatic
 - Prices and stock are server-owned. The checkout boundary recalculates line totals from catalog data and never trusts client totals.
 - Payments use `PaymentProvider` and `MockPaymentProvider`; adding Wompi, ePayco, Stripe or MercadoPago means implementing the same adapter contract.
 - Interrapidísimo is intentionally not integrated by API. `Shipment` stores carrier-agnostic tracking data and the UI points customers to the public tracking page.
-- Expiring reservations, failed emails and retryable work are modeled as `Job` records for Vercel Cron/Supabase-compatible processing.
-- The current product data is demo data. The API and schema boundaries are ready to swap to Supabase/Prisma-backed repositories in the next increment.
-
+- Expiring reservations, failed emails and retryable work are modeled as `Job` records in the legacy planning schema for a future Vercel Cron-compatible implementation.
+- The current product data is demo data. MongoDB powers authentication and the admin data reader; catalog persistence can be connected in a later increment.
+- Ably capabilities are intentionally narrow. Product and order mutation endpoints should call `publishRealtimeEvent` only after a successful server-side write.

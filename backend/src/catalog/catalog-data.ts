@@ -17,7 +17,7 @@ export type StoreProduct = {
   reviewCount: number;
 };
 
-// Demo catalog data keeps the first storefront increment reviewable before Supabase is connected.
+// Demo catalog data keeps the storefront reviewable while MongoDB catalog persistence is connected incrementally.
 // Product IDs, slugs, prices and variant field names remain stable while the visible assortment
 // is written for byjhor's wig and hair-care offer. Campaign imagery is intentionally separate from
 // the product contract and can be replaced by authorized inventory photography without code changes.
