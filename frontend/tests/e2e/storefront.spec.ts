@@ -20,6 +20,12 @@ test("admin route keeps data private until its services are configured", async (
   await expect(page.getByText("Productos recientes")).toHaveCount(0);
 });
 
+// The bootstrap endpoint must remain private even though it only imports known local catalog data.
+test("catalog bootstrap endpoint rejects anonymous requests", async ({ request }) => {
+  const response = await request.post("/api/admin/catalog/import", { data: {} });
+  expect(response.status()).toBe(401);
+});
+
 // Anonymous customers are redirected to the real login surface instead of seeing account data.
 test("customer account stays protected while public auth routes remain reachable", async ({ page }) => {
   await page.goto("/cuenta");

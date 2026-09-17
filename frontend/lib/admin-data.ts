@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { AdminDashboardData, AdminOrder, AdminOrderStatus, AdminProduct, AdminProductInput } from "@backend/admin/admin-types";
+import { PRODUCTS, type StoreProduct } from "@backend/catalog/catalog-data";
 import { ObjectId, type Document, type WithId } from "mongodb";
 import { getCatalogCollection, getCatalogIdFilter, mapCatalogProduct, readCatalogDate, readCatalogNumber, readCatalogString } from "@/lib/catalog-repository";
 import { getMongoDatabase } from "@/lib/mongodb";
@@ -56,6 +57,39 @@ export async function createAdminProduct(input: AdminProductInput) {
     throw error;
   }
   return mapCatalogProduct(document);
+}
+
+// Build the initial Mongo document from the catalog that has powered the storefront so the import keeps its public identity stable.
+function createInitialCatalogDocument(product: StoreProduct, now: Date): Document {
+  return { _id: product.id, ...product, status: "ACTIVE", stock: null, createdAt: now, updatedAt: now };
+}
+
+// Treat a duplicate-key race as a successful idempotent import because another request already created that catalog record.
+function isDuplicateKeyError(error: unknown) { return typeof error === "object" && error !== null && Reflect.get(error, "code") === 11000; }
+
+// Copy only missing local catalog products into MongoDB; existing documents are never overwritten by this bootstrap action.
+export async function importInitialCatalog() {
+  const collection = await getCatalogCollection();
+  if (!collection) throw new AdminDataError("UNAVAILABLE", "MongoDB no está configurado para el catálogo.");
+
+  const identityFilters: Document[] = PRODUCTS.flatMap((product) => [{ id: product.id }, { slug: product.slug }]);
+  const existingDocuments = await collection.find({ $or: identityFilters } as Document).toArray();
+  const existingIds = new Set(existingDocuments.map((document) => mapCatalogProduct(document).id));
+  const existingSlugs = new Set(existingDocuments.map((document) => readCatalogString(document.slug, "")));
+  const now = new Date();
+  const missingDocuments = PRODUCTS
+    .filter((product) => !existingIds.has(product.id) && !existingSlugs.has(product.slug))
+    .map((product) => createInitialCatalogDocument(product, now));
+
+  if (missingDocuments.length) {
+    try {
+      await collection.insertMany(missingDocuments, { ordered: false });
+    } catch (error) {
+      if (!isDuplicateKeyError(error)) throw error;
+    }
+  }
+
+  return { imported: missingDocuments.length, products: await listAdminProducts() };
 }
 
 // Update only validated product fields and keep the existing document identity stable for carts and links.
