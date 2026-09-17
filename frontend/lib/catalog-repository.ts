@@ -7,7 +7,7 @@ import { getMongoDatabase } from "@/lib/mongodb";
 export type CatalogProductRecord = Readonly<AdminProduct>;
 
 // Keep the Mongo document shape flexible enough to read the store's existing catalog without a destructive migration.
-export type CatalogProductDocument = Readonly<{ _id?: string | ObjectId; id?: unknown; slug?: unknown; name?: unknown; category?: unknown; categoryName?: unknown; price?: unknown; basePrice?: unknown; promotionalPrice?: unknown; compareAtPrice?: unknown; description?: unknown; shortDescription?: unknown; image?: unknown; secondaryImage?: unknown; images?: unknown; badge?: unknown; sizes?: unknown; colors?: unknown; rating?: unknown; reviewCount?: unknown; stock?: unknown; available?: unknown; inventory?: unknown; status?: unknown; updatedAt?: unknown; createdAt?: unknown; deletedAt?: unknown; [key: string]: unknown }>;
+export type CatalogProductDocument = Readonly<{ _id?: string | ObjectId; id?: unknown; slug?: unknown; name?: unknown; category?: unknown; categoryName?: unknown; price?: unknown; basePrice?: unknown; promotionalPrice?: unknown; compareAtPrice?: unknown; description?: unknown; shortDescription?: unknown; image?: unknown; secondaryImage?: unknown; secondaryImages?: unknown; images?: unknown; badge?: unknown; sizes?: unknown; colors?: unknown; rating?: unknown; reviewCount?: unknown; stock?: unknown; available?: unknown; inventory?: unknown; status?: unknown; updatedAt?: unknown; createdAt?: unknown; deletedAt?: unknown; [key: string]: unknown }>;
 
 const fallbackImage = "/catalog/peluca-aura.webp";
 const productStatuses = new Set<AdminProductStatus>(["DRAFT", "ACTIVE", "ARCHIVED"]);
@@ -21,13 +21,24 @@ export function readCatalogDate(value: unknown) { const date = value instanceof 
 function readCatalogArray(value: unknown) { return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0).map((item) => item.trim()).slice(0, 20) : []; }
 function readCategory(document: CatalogProductDocument): ProductCategory { const value = readCatalogString(document.category ?? document.categoryName, "Esenciales"); return productCategories.has(value as ProductCategory) ? value as ProductCategory : value.toLowerCase().includes("mov") ? "Movimiento" : value.toLowerCase().includes("acc") ? "Accesorios" : "Esenciales"; }
 function readStatus(value: unknown): AdminProductStatus { const status = typeof value === "string" ? value.toUpperCase() : "DRAFT"; return productStatuses.has(status as AdminProductStatus) ? status as AdminProductStatus : "DRAFT"; }
+function readImageUrls(value: unknown) {
+  if (!Array.isArray(value)) return [];
+  return value.map((item): string => typeof item === "string" ? item : typeof item === "object" && item && typeof (item as Record<string, unknown>).url === "string" ? (item as Record<string, unknown>).url as string : "").filter((item) => item.trim().length > 0).map((item) => item.trim());
+}
+
 function readImage(document: CatalogProductDocument, secondary = false) {
   const direct = secondary ? document.secondaryImage : document.image;
   if (typeof direct === "string" && direct.trim()) return direct.trim();
-  const images = Array.isArray(document.images) ? document.images : [];
-  const imageDocument = images.find((item) => typeof item === "object" && item && ((item as Record<string, unknown>).position ?? 0) === (secondary ? 1 : 0));
-  if (typeof imageDocument === "object" && imageDocument && typeof (imageDocument as Record<string, unknown>).url === "string") return ((imageDocument as Record<string, unknown>).url as string).trim();
+  const images = readImageUrls(document.images);
+  if (images[secondary ? 1 : 0]) return images[secondary ? 1 : 0];
   return fallbackImage;
+}
+
+// Normalize current and legacy secondary-image shapes into one ordered gallery for the public product contract.
+function readSecondaryImages(document: CatalogProductDocument, primaryImage: string) {
+  const legacySecondary = typeof document.secondaryImage === "string" ? [document.secondaryImage] : [];
+  const secondaryImages = [...readImageUrls(document.secondaryImages), ...legacySecondary, ...readImageUrls(document.images).slice(1)];
+  return [...new Set(secondaryImages)].filter((image) => image !== primaryImage).slice(0, 12);
 }
 
 // Map Mongo records into the exact public product contract shared by cards, detail pages and checkout previews.
@@ -38,7 +49,9 @@ export function mapCatalogProduct(document: CatalogProductDocument): CatalogProd
   const price = readCatalogNumber(document.price, promotionalPrice > 0 ? promotionalPrice : basePrice);
   const inventory = typeof document.inventory === "object" && document.inventory ? document.inventory as Record<string, unknown> : null;
   const stockValue = document.stock ?? document.available ?? inventory?.available;
-  const images = { image: readImage(document), secondaryImage: readImage(document, true) };
+  const primaryImage = readImage(document);
+  const secondaryImages = readSecondaryImages(document, primaryImage);
+  const images = { image: primaryImage, secondaryImage: secondaryImages[0] ?? readImage(document, true), secondaryImages: secondaryImages.length ? secondaryImages : undefined };
   const sizes = readCatalogArray(document.sizes);
   const colors = readCatalogArray(document.colors);
   return {

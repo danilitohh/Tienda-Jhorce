@@ -8,9 +8,13 @@ import { useCart } from "@/components/cart/cart-provider";
 import { getCategoryLabel, getColorLabel } from "@/lib/catalog-labels";
 import { formatCop } from "@/lib/format";
 
+// Combine the primary image with every secondary upload while removing duplicate legacy URLs.
+function getProductImages(product: StoreProduct) { return [...new Set([product.image, ...(product.secondaryImages ?? [product.secondaryImage])])]; }
+
 // Product detail owns variant selection and adds a fully specified product to the cart.
 export function ProductDetails({ product }: Readonly<{ product: StoreProduct }>) {
-  const [image, setImage] = useState(product.image);
+  const productImages = getProductImages(product);
+  const [image, setImage] = useState(productImages[0]);
   const [selectedSize, setSelectedSize] = useState(product.sizes?.[2] ?? product.sizes?.[0] ?? "Única");
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] ?? "");
   const [quantity, setQuantity] = useState(1);
@@ -25,7 +29,7 @@ export function ProductDetails({ product }: Readonly<{ product: StoreProduct }>)
 
   return <div className="grid gap-10 lg:grid-cols-[1.15fr_.85fr] lg:gap-16">
     <div className="grid gap-3 sm:grid-cols-[90px_1fr]">
-      <div className="order-2 grid grid-cols-2 gap-3 sm:order-1 sm:grid-cols-1"><button onClick={() => setImage(product.image)} className={`relative aspect-[4/5] overflow-hidden rounded-[8px] bg-sand ${image === product.image ? "ring-2 ring-teal ring-offset-2" : ""}`} aria-label="Ver primera imagen"><Image src={product.image} alt="" fill sizes="90px" className="object-cover" /></button><button onClick={() => setImage(product.secondaryImage)} className={`relative aspect-[4/5] overflow-hidden rounded-[8px] bg-sand ${image === product.secondaryImage ? "ring-2 ring-teal ring-offset-2" : ""}`} aria-label="Ver segunda imagen"><Image src={product.secondaryImage} alt="" fill sizes="90px" className="object-cover" /></button></div>
+      <div className="order-2 grid grid-cols-2 gap-3 sm:order-1 sm:grid-cols-1">{productImages.map((source, index) => <button key={source} type="button" onClick={() => setImage(source)} className={`relative aspect-[4/5] overflow-hidden rounded-[8px] bg-sand ${image === source ? "ring-2 ring-teal ring-offset-2" : ""}`} aria-label={`Ver imagen ${index + 1} de ${product.name}`}><Image src={source} alt="" fill sizes="90px" className="object-cover" /></button>)}</div>
       <div className="relative order-1 aspect-[4/5] overflow-hidden rounded-[10px] bg-sand sm:order-2"><Image src={image} alt={`Imagen de referencia de ${product.name}`} fill priority sizes="(max-width: 768px) 100vw, 55vw" className="object-cover" /></div>
     </div>
     <div className="lg:py-8"><div className="flex items-center gap-2 text-xs uppercase tracking-[.18em] text-muted"><span>{getCategoryLabel(product.category)}</span><span aria-hidden="true">/</span><span>byjhor</span></div><h1 className="mt-4 font-display text-5xl font-semibold leading-[.92] tracking-[-.03em] sm:text-6xl">{product.name}</h1><div className="mt-5 flex items-center gap-3"><span className="font-body text-lg font-semibold tabular-nums">{formatCop(product.price)}</span>{product.compareAtPrice && <span className="text-sm text-muted line-through">{formatCop(product.compareAtPrice)}</span>}<span className="ml-auto flex items-center gap-1 text-sm"><Star size={16} weight="fill" className="text-sun-deep" /> {product.rating} <span className="text-muted">({product.reviewCount})</span></span></div><p className="mt-6 max-w-md text-[15px] leading-7 text-muted">{product.description}</p>

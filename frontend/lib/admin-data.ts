@@ -50,7 +50,8 @@ export async function createAdminProduct(input: AdminProductInput) {
   if (!collection) throw new AdminDataError("UNAVAILABLE", "MongoDB no está configurado para el catálogo.");
   if (await collection.findOne({ slug: input.slug, deletedAt: { $exists: false } })) throw new AdminDataError("CONFLICT", "Ya existe un producto con ese slug.");
   const now = new Date();
-  const document = { _id: randomUUID(), ...input, secondaryImage: input.secondaryImage ?? input.image, rating: 0, reviewCount: 0, createdAt: now, updatedAt: now };
+  const secondaryImages = input.secondaryImages ?? (input.secondaryImage ? [input.secondaryImage] : []);
+  const document = { _id: randomUUID(), ...input, ...(secondaryImages.length ? { secondaryImage: secondaryImages[0], secondaryImages } : { secondaryImage: input.image }), rating: 0, reviewCount: 0, createdAt: now, updatedAt: now };
   try {
     await collection.insertOne(document);
   } catch (error) {
@@ -113,8 +114,9 @@ export async function updateAdminProduct(id: string, input: Partial<AdminProduct
     if (duplicate && mapCatalogProduct(duplicate).id !== id) throw new AdminDataError("CONFLICT", "Ya existe un producto con ese slug.");
   }
   const now = new Date();
+  const imageUpdate = input.secondaryImages ? { ...(input.secondaryImages[0] ? { secondaryImage: input.secondaryImages[0] } : input.image ? { secondaryImage: input.image } : {}), secondaryImages: input.secondaryImages } : input.secondaryImage ? { secondaryImage: input.secondaryImage, secondaryImages: [input.secondaryImage] } : {};
   try {
-    const document = await collection.findOneAndUpdate(getCatalogIdFilter(id), { $set: { ...input, ...(input.image && !input.secondaryImage ? { secondaryImage: input.image } : {}), updatedAt: now } }, { returnDocument: "after" });
+    const document = await collection.findOneAndUpdate(getCatalogIdFilter(id), { $set: { ...input, ...imageUpdate, ...(input.image && !input.secondaryImage && !input.secondaryImages ? { secondaryImage: input.image } : {}), updatedAt: now } }, { returnDocument: "after" });
     if (!document) throw new AdminDataError("NOT_FOUND", "No encontramos ese producto.");
     return mapCatalogProduct(document);
   } catch (error) {

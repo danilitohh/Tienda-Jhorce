@@ -10,6 +10,7 @@ export type StoreProduct = {
   description: string;
   image: string;
   secondaryImage: string;
+  secondaryImages?: string[];
   badge?: string;
   sizes?: string[];
   colors?: string[];

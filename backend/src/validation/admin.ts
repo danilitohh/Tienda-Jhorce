@@ -15,6 +15,7 @@ const productFields = z.object({
   description: z.string().trim().min(10).max(2_000),
   image: productImage,
   secondaryImage: productImage.optional(),
+  secondaryImages: z.array(productImage).max(12).optional(),
   badge: z.string().trim().max(60).optional(),
   sizes: z.array(productOption).max(20).optional(),
   colors: z.array(productOption).max(20).optional(),

@@ -26,6 +26,12 @@ test("catalog bootstrap endpoint rejects anonymous requests", async ({ request }
   expect(response.status()).toBe(401);
 });
 
+// Image storage is an admin capability too, so anonymous clients cannot write to the GridFS bucket.
+test("media upload endpoint rejects anonymous requests", async ({ request }) => {
+  const response = await request.post("/api/admin/media");
+  expect(response.status()).toBe(401);
+});
+
 // Anonymous customers are redirected to the real login surface instead of seeing account data.
 test("customer account stays protected while public auth routes remain reachable", async ({ page }) => {
   await page.goto("/cuenta");

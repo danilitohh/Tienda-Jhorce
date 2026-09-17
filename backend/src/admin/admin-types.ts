@@ -19,6 +19,7 @@ export type AdminProductInput = Readonly<{
   description: string;
   image: string;
   secondaryImage?: string;
+  secondaryImages?: string[];
   badge?: string;
   sizes?: string[];
   colors?: string[];
