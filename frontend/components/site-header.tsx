@@ -22,7 +22,7 @@ export function SiteHeader() {
   const { itemCount } = useCart();
 
   return <header className="sticky top-0 z-30 border-b border-ink/10 bg-paper/95 backdrop-blur">
-    <div className="site-shell flex min-h-20 items-center justify-between">
+    <div className="site-shell flex min-h-24 items-center justify-between">
       <Link href="/" aria-label="byjhor, inicio" className="shrink-0">
         <BrandLogo priority />
       </Link>

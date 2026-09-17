@@ -18,7 +18,8 @@ const categories: ReadonlyArray<{ value: "Todos" | ProductCategory; label: strin
 // Client-side filtering keeps the catalog responsive while preserving the existing query and sort behavior.
 export function CatalogView({ products, initialCategory = "Todos" }: Readonly<{ products: StoreProduct[]; initialCategory?: string }>) {
   const [query, setQuery] = useState("");
-  const [category, setCategory] = useState(initialCategory);
+  const requestedCategory = categories.some((item) => item.value === initialCategory) ? initialCategory : "Todos";
+  const [category, setCategory] = useState(requestedCategory);
   const [sort, setSort] = useState("featured");
   const [filtersOpen, setFiltersOpen] = useState(false);
 

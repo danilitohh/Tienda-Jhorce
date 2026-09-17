@@ -33,7 +33,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 @layer components {
   /* Shared container keeps every route aligned to the same 1280px editorial grid. */
-  .site-shell { @apply mx-auto w-full max-w-[1280px] px-5 sm:px-8 lg:px-10; }
+  .site-shell { @apply mx-auto w-full max-w-[1760px] px-5 sm:px-8 lg:px-10; }
 
   /* Eyebrows provide a restrained section hierarchy without decorative numbering. */
   .eyebrow { @apply text-[0.68rem] font-bold uppercase tracking-[0.18em] text-accent-deep; }
