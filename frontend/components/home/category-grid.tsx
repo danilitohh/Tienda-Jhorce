@@ -23,26 +23,28 @@ export function CategoryGrid({ products }: Readonly<{ products: StoreProduct[] }
     .map((category) => ({ ...category, product: products.find((product) => product.category === category.name) }))
     .filter((category): category is typeof category & { product: StoreProduct } => Boolean(category.product));
 
-  return <section aria-labelledby="categorias-title" className="site-shell py-16 sm:py-20 lg:py-24">
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-      <div>
-        <p className="eyebrow">Explora tu estilo</p>
-        <h2 id="categorias-title" className="section-title mt-3">Encuentra tu peluca</h2>
+  return <section aria-labelledby="categorias-title" className="bg-paper/72 py-16 sm:py-20 lg:py-24">
+    <div className="site-shell">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="eyebrow">Explora tu estilo</p>
+          <h2 id="categorias-title" className="section-title mt-3">Encuentra tu peluca</h2>
+        </div>
+        <p className="max-w-xs text-sm leading-6 text-muted sm:text-right">Largos, tonos y accesorios para elegir cómo quieres verte.</p>
       </div>
-      <p className="max-w-xs text-sm leading-6 text-muted sm:text-right">Largos, tonos y accesorios para elegir cómo quieres verte.</p>
-    </div>
-    <div className="mt-9 grid gap-4 sm:grid-cols-3 sm:gap-5 lg:mt-12">
-      {availableCategories.map(({ name, label, product }) => <Link key={name} href={`/catalogo?category=${name}`} className="group">
-        <div className={`relative rounded-[12px] p-2.5 sm:p-3 ${categoryTones[name]}`}>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] bg-white">
-            <Image src={product.image} alt={`Explorar ${label}`} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+      <div className="mt-9 grid gap-4 sm:grid-cols-3 sm:gap-5 lg:mt-12">
+        {availableCategories.map(({ name, label, product }) => <Link key={name} href={`/catalogo?category=${name}`} className="group">
+          <div className={`relative rounded-[12px] p-2.5 sm:p-3 ${categoryTones[name]}`}>
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] bg-white">
+              <Image src={product.image} alt={`Explorar ${label}`} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+            </div>
           </div>
-        </div>
-        <div className="flex items-center justify-between border-b border-ink/15 py-4">
-          <span className="font-display text-2xl font-semibold text-ink">{label}</span>
-          <ArrowUpRight aria-hidden="true" size={20} className="text-teal transition-transform duration-300 group-hover:translate-x-1" />
-        </div>
-      </Link>)}
+          <div className="flex items-center justify-between border-b border-ink/15 py-4">
+            <span className="font-display text-2xl font-semibold text-ink">{label}</span>
+            <ArrowUpRight aria-hidden="true" size={20} className="text-teal transition-transform duration-300 group-hover:translate-x-1" />
+          </div>
+        </Link>)}
+      </div>
     </div>
   </section>;
 }

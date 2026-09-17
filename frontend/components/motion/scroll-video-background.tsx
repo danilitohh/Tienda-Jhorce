@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const LAST_FRAME_EPSILON = 0.05;
+const SCRUB_SETTLE_MS = 120;
 
 export type ScrollVideoRange = {
   /** Absolute scroll position in pixels, unless startSelector is provided. */
@@ -55,6 +56,9 @@ export function ScrollVideoBackground({ src, poster = "/brand/about-byjhor.png",
   const frameRequestRef = useRef<number | null>(null);
   const durationRef = useRef(0);
   const boundsRef = useRef<ScrollBounds>({ start: 0, end: 0 });
+  const targetTimeRef = useRef(0);
+  const visualTimeRef = useRef(0);
+  const lastFrameTimestampRef = useRef<number | null>(null);
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
   const [hasError, setHasError] = useState(false);
 
@@ -69,11 +73,11 @@ export function ScrollVideoBackground({ src, poster = "/brand/about-byjhor.png",
     return () => mediaQuery.removeEventListener("change", updatePreference);
   }, []);
 
-  // Schedule one frame at a time and read the newest scroll position when it runs, dropping stale seek requests.
+  // Schedule one frame at a time and ease the paused video toward the newest scroll target, dropping stale seek requests.
   const scheduleSync = useCallback(() => {
     if (frameRequestRef.current !== null) return;
 
-    frameRequestRef.current = window.requestAnimationFrame(() => {
+    const renderFrame = (timestamp: number) => {
       frameRequestRef.current = null;
       const video = videoRef.current;
       const duration = durationRef.current;
@@ -82,12 +86,28 @@ export function ScrollVideoBackground({ src, poster = "/brand/about-byjhor.png",
 
       const { start, end } = boundsRef.current;
       const progress = clamp((window.scrollY - start) / (end - start), 0, 1);
-      const targetTime = progress >= 1 ? Math.max(0, duration - LAST_FRAME_EPSILON) : progress * duration;
+      targetTimeRef.current = progress >= 1 ? Math.max(0, duration - LAST_FRAME_EPSILON) : progress * duration;
 
-      if (Math.abs(video.currentTime - targetTime) > 0.01) {
-        video.currentTime = targetTime;
+      // Keep one browser seek in flight so a quick direction change never queues obsolete frame requests.
+      if (video.seeking) return;
+
+      const elapsed = lastFrameTimestampRef.current === null ? 16 : timestamp - lastFrameTimestampRef.current;
+      const settleProgress = 1 - Math.exp(-Math.min(elapsed, 100) / SCRUB_SETTLE_MS);
+      const distance = targetTimeRef.current - visualTimeRef.current;
+      const nextTime = Math.abs(distance) <= 0.008 ? targetTimeRef.current : visualTimeRef.current + distance * settleProgress;
+      visualTimeRef.current = nextTime;
+      lastFrameTimestampRef.current = timestamp;
+
+      if (Math.abs(video.currentTime - nextTime) > 0.008) {
+        video.currentTime = nextTime;
       }
-    });
+
+      if (Math.abs(targetTimeRef.current - nextTime) > 0.008) {
+        frameRequestRef.current = window.requestAnimationFrame(renderFrame);
+      }
+    };
+
+    frameRequestRef.current = window.requestAnimationFrame(renderFrame);
   }, []);
 
   // Bind scroll, resize, content-size and metadata events, then remove every observer and pending frame on teardown.
@@ -104,9 +124,11 @@ export function ScrollVideoBackground({ src, poster = "/brand/about-byjhor.png",
     const handleMetadata = () => {
       if (Number.isFinite(video.duration) && video.duration > 0) {
         durationRef.current = video.duration;
+        visualTimeRef.current = video.currentTime;
         refreshBounds();
       }
     };
+    const handleSeeked = () => scheduleSync();
     const handleResize = () => refreshBounds();
     const resizeObserver = new ResizeObserver(handleResize);
     const mutationObserver = new MutationObserver(handleResize);
@@ -114,6 +136,7 @@ export function ScrollVideoBackground({ src, poster = "/brand/about-byjhor.png",
     boundsRef.current = getScrollBounds(range);
     video.addEventListener("loadedmetadata", handleMetadata);
     video.addEventListener("loadeddata", scheduleSync);
+    video.addEventListener("seeked", handleSeeked);
     window.addEventListener("scroll", scheduleSync, { passive: true });
     window.addEventListener("resize", handleResize);
     window.addEventListener("orientationchange", handleResize);
@@ -125,6 +148,7 @@ export function ScrollVideoBackground({ src, poster = "/brand/about-byjhor.png",
     return () => {
       video.removeEventListener("loadedmetadata", handleMetadata);
       video.removeEventListener("loadeddata", scheduleSync);
+      video.removeEventListener("seeked", handleSeeked);
       window.removeEventListener("scroll", scheduleSync);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("orientationchange", handleResize);
@@ -139,7 +163,7 @@ export function ScrollVideoBackground({ src, poster = "/brand/about-byjhor.png",
 
   return <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-paper">
     <div className="absolute inset-0 bg-cover bg-center opacity-100" style={{ backgroundImage: `url(${poster})`, backgroundPosition: subjectPosition }} />
-    {!hasError && reducedMotion === false && <video ref={videoRef} className="absolute inset-0 h-full w-full object-cover opacity-80" style={{ objectPosition: subjectPosition }} src={src} poster={poster} preload="auto" muted playsInline tabIndex={-1} />}
-    <div className="absolute inset-0 bg-paper/55" />
+    {!hasError && reducedMotion === false && <video ref={videoRef} className="absolute inset-0 h-full w-full object-cover opacity-100" style={{ objectPosition: subjectPosition }} src={src} poster={poster} preload="auto" muted playsInline tabIndex={-1} />}
+    <div className="absolute inset-0 bg-paper/28" />
   </div>;
 }

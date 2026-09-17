@@ -19,7 +19,7 @@ export function ProductCard({ product }: Readonly<{ product: StoreProduct }>) {
         <Image src={product.image} alt={`Imagen de referencia de ${product.name}`} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
       </Link>
     </div>
-    <div className="flex min-h-[8rem] flex-1 items-start justify-between gap-3 pt-4">
+    <div className="flex min-h-[8rem] flex-1 items-start justify-between gap-3 rounded-t-[10px] bg-paper/90 px-3 pt-4 backdrop-blur-[2px]">
       <div>
         <p className="text-[0.65rem] font-bold uppercase tracking-[.16em] text-teal">{getCategoryLabel(product.category)}</p>
         <Link href={`/producto/${product.slug}`} className="mt-2 block font-display text-[1.35rem] font-semibold leading-none tracking-[-.02em] transition-colors hover:text-coral">{product.name}</Link>
@@ -31,7 +31,7 @@ export function ProductCard({ product }: Readonly<{ product: StoreProduct }>) {
         {product.compareAtPrice && <p className="mt-1 text-xs text-muted line-through">{formatCop(product.compareAtPrice)}</p>}
       </div>
     </div>
-    <div className="mt-auto pt-4">
+    <div className="mt-auto rounded-b-[10px] bg-paper/90 px-3 pb-3 pt-4 backdrop-blur-[2px]">
       {hasOptions ? <Link href={`/producto/${product.slug}`} className="button-secondary h-10 min-h-10 w-full px-3 text-xs">Elegir opciones <ArrowUpRight size={15} /></Link> : <button onClick={() => addItem(product)} className="button-secondary h-10 min-h-10 w-full px-3 text-xs" aria-label={`Añadir ${product.name} al carrito`}><Plus size={15} /> Añadir al carrito</button>}
     </div>
   </article>;
