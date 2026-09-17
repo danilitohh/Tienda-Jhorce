@@ -10,7 +10,7 @@ The first increment contains:
 - persistent client cart with quantity controls and checkout handoff;
 - local React Bits-style visual components isolated under `frontend/components/react-bits/`;
 - MongoDB-backed customer authentication with verified email, secure sessions and password recovery;
-- MongoDB admin dashboard data reader plus a legacy Prisma planning schema for future relational imports;
+- MongoDB admin dashboard data reader with a separate private username/password session plus a legacy Prisma planning schema for future relational imports;
 - Zod input validation, consistent API responses, health check, product API, and a mock payment provider adapter;
 - unit test coverage for pricing and a Playwright smoke flow scaffold;
 - SEO metadata, sitemap and robots routes.
@@ -33,7 +33,9 @@ The storefront runs at `http://localhost:3000`. It renders catalog demo data wit
 1. Add `MONGODB_URI` in Vercel. The integration already provides it for this project.
 2. Configure `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, and make sure the sender domain is verified in Resend.
 3. Set `NEXT_PUBLIC_SITE_URL` to the public production URL so email links return to the store.
-4. Set `ADMIN_EMAIL` to the owner's email. After that person registers and confirms the address, they receive the only `admin` role and can enter `/admin`.
+4. Set the private `ADMIN_USERNAME` and `ADMIN_PASSWORD` credentials for the owner. They can then enter `/admin/login`; customer email accounts do not grant administrative access.
+
+The admin session is stored separately in `MONGODB_ADMIN_SESSIONS_COLLECTION` and expires after eight hours. Changing either admin credential invalidates previous admin sessions after the next request. There is no admin password recovery by email; rotate the private variables in Vercel when access needs to change.
 
 Passwords use salted `scrypt` hashes. Browser sessions and email links are opaque random tokens whose SHA-256 digests are stored in MongoDB. Existing Supabase accounts remain untouched, but cannot be migrated automatically because their password hashes are not exportable; invite those customers to register again after a separate, approved migration campaign.
 

@@ -2,18 +2,13 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, LockKey, ShieldCheck } from "@phosphor-icons/react/dist/ssr";
 import { BrandLogo } from "@/components/brand/brand-logo";
 
-type AccessState = "not-configured" | "forbidden" | "unavailable";
+type AccessState = "not-configured" | "unavailable";
 
 const stateCopy: Record<AccessState, Readonly<{ eyebrow: string; title: string; description: string }>> = {
   "not-configured": {
     eyebrow: "Administración protegida",
-    title: "Configura el acceso de la dueña.",
+    title: "Configura el acceso administrativo.",
     description: "Este panel solo se activa con una sesión segura y MongoDB. Mientras tanto, ningún dato de la tienda queda expuesto.",
-  },
-  forbidden: {
-    eyebrow: "Acceso restringido",
-    title: "Esta cuenta no administra byjhor.",
-    description: "Inicia sesión con la cuenta de la dueña configurada para administrar byjhor.",
   },
   unavailable: {
     eyebrow: "Datos no disponibles",
@@ -22,7 +17,7 @@ const stateCopy: Record<AccessState, Readonly<{ eyebrow: string; title: string; 
   },
 };
 
-// A deliberate safe state prevents unconfigured or unauthorized accounts from seeing store operations.
+// A deliberate safe state prevents unconfigured access from seeing store operations.
 export function AdminAccessState({ state, message }: Readonly<{ state: AccessState; message?: string }>) {
   const copy = stateCopy[state];
 
@@ -38,9 +33,9 @@ export function AdminAccessState({ state, message }: Readonly<{ state: AccessSta
           <p className="eyebrow mt-8">{copy.eyebrow}</p>
           <h1 className="mt-4 font-display text-4xl font-semibold leading-[.95] tracking-[-.03em] sm:text-5xl">{copy.title}</h1>
           <p className="mt-5 text-sm leading-7 text-muted">{message ?? copy.description}</p>
-          {state === "not-configured" && <div className="mt-8 rounded-[8px] border border-gold/35 bg-gold-pale/55 p-4 text-xs leading-6 text-ink"><p className="font-semibold">Configuración necesaria</p><ol className="mt-2 list-decimal space-y-1 pl-4 text-muted"><li>Conserva <code className="rounded bg-white px-1 py-0.5 text-ink">MONGODB_URI</code> solo en Vercel.</li><li>Configura <code className="rounded bg-white px-1 py-0.5 text-ink">ADMIN_EMAIL</code> con el correo de la dueña.</li><li>La dueña crea y confirma su cuenta con ese correo para recibir el único rol <code className="rounded bg-white px-1 py-0.5 text-ink">admin</code>.</li></ol></div>}
+          {state === "not-configured" && <div className="mt-8 rounded-[8px] border border-gold/35 bg-gold-pale/55 p-4 text-xs leading-6 text-ink"><p className="font-semibold">Configuración necesaria</p><ol className="mt-2 list-decimal space-y-1 pl-4 text-muted"><li>Conserva <code className="rounded bg-white px-1 py-0.5 text-ink">MONGODB_URI</code> solo en Vercel.</li><li>Configura <code className="rounded bg-white px-1 py-0.5 text-ink">ADMIN_USERNAME</code> con el usuario privado de la dueña.</li><li>Configura <code className="rounded bg-white px-1 py-0.5 text-ink">ADMIN_PASSWORD</code> como variable privada, con al menos 8 caracteres.</li></ol></div>}
           <div className="mt-8 flex flex-wrap gap-3">
-            {state !== "forbidden" && <Link href="/login?next=/admin" className="button-primary">Iniciar sesión <ArrowRight size={17} /></Link>}
+            <Link href="/admin/login" className="button-primary">Iniciar sesión <ArrowRight size={17} /></Link>
             <Link href="/" className="button-secondary">Volver a la tienda <LockKey size={16} /></Link>
           </div>
         </section>

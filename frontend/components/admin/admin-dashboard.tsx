@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight, Package, ShoppingBag, Storefront, WarningCircle } from "@phosphor-icons/react/dist/ssr";
 import type { AdminDashboardData, AdminProductStatus } from "@backend/admin/admin-types";
+import { AdminLogoutButton } from "@/components/admin/admin-logout-button";
 import { BrandLogo } from "@/components/brand/brand-logo";
 import { AdminRealtimeSync } from "@/components/realtime/admin-realtime-sync";
 import { formatCop } from "@/lib/format";
@@ -19,7 +20,7 @@ function statusClass(status: AdminProductStatus) {
 }
 
 // The owner dashboard intentionally starts with real operational visibility rather than placeholder controls.
-export function AdminDashboard({ data, ownerEmail }: Readonly<{ data: AdminDashboardData; ownerEmail: string | null }>) {
+export function AdminDashboard({ data, ownerUsername }: Readonly<{ data: AdminDashboardData; ownerUsername: string }>) {
   const activeProducts = data.products.filter((product) => product.status === "ACTIVE").length;
   const lowStockProducts = data.products.filter((product) => product.stock !== null && product.stock <= 3).length;
   const pendingOrders = data.recentOrders.filter((order) => ["CREATED", "CONFIRMED", "PAID", "PREPARING"].includes(order.status)).length;
@@ -35,7 +36,7 @@ export function AdminDashboard({ data, ownerEmail }: Readonly<{ data: AdminDashb
       <header className="border-b border-ink/10 bg-white">
         <div className="site-shell flex min-h-20 items-center justify-between gap-5">
           <Link href="/" aria-label="Ir a la tienda byjhor"><BrandLogo className="h-10 w-28 sm:h-11 sm:w-32" priority /></Link>
-          <div className="flex items-center gap-4"><AdminRealtimeSync enabled={Boolean(process.env.ABLY_API_KEY)} /><div className="text-right"><p className="text-xs font-semibold text-ink">Panel admin</p><p className="mt-1 hidden text-xs text-muted sm:block">{ownerEmail ?? "Cuenta administradora"}</p></div></div>
+          <div className="flex items-center gap-3"><AdminRealtimeSync enabled={Boolean(process.env.ABLY_API_KEY)} /><div className="text-right"><p className="text-xs font-semibold text-ink">Panel admin</p><p className="mt-1 hidden text-xs text-muted sm:block">Usuario: {ownerUsername}</p></div><AdminLogoutButton /></div>
         </div>
       </header>
 

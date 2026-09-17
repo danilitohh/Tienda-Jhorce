@@ -20,6 +20,12 @@ export const loginSchema = z.object({
   password: z.string().min(1).max(128),
 });
 
+// Validate the private admin credentials without coupling them to the customer email flow.
+export const adminLoginSchema = z.object({
+  username: z.string().trim().min(3).max(80).transform((value) => value.toLowerCase()),
+  password: z.string().min(1).max(128),
+});
+
 // Password-recovery requests only need a valid normalized email address.
 export const recoveryRequestSchema = z.object({ email: normalizedEmail });
 

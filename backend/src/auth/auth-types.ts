@@ -1,5 +1,5 @@
-// Domain roles stay intentionally small: customers use the storefront and the owner manages it.
-export type StoreRole = "customer" | "admin";
+// Customer accounts keep one role; the owner authenticates through the separate admin session.
+export type StoreRole = "customer";
 
 // Only serializable, non-sensitive user fields may cross from the server to the browser.
 export type AuthenticatedUser = Readonly<{

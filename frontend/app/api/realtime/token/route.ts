@@ -1,6 +1,6 @@
 import * as Ably from "ably";
 import { randomUUID } from "node:crypto";
-import { isStoreAdmin } from "@backend/auth/role-service";
+import { getCurrentAdminSession } from "@/lib/admin-session";
 import { getCurrentUser } from "@/lib/auth-session";
 import { REALTIME_CHANNELS } from "@/lib/realtime";
 import { NextResponse } from "next/server";
@@ -14,11 +14,12 @@ export async function GET() {
 
   try {
     const user = await getCurrentUser();
+    const admin = await getCurrentAdminSession();
     const capabilities: Record<string, string[]> = { [REALTIME_CHANNELS.catalog]: ["subscribe"] };
-    if (user && isStoreAdmin(user.role)) capabilities[REALTIME_CHANNELS.admin] = ["subscribe"];
+    if (admin) capabilities[REALTIME_CHANNELS.admin] = ["subscribe"];
 
     const tokenRequest = await new Ably.Rest({ key }).auth.createTokenRequest({
-      clientId: user ? `user:${user.id}` : `guest:${randomUUID()}`,
+      clientId: admin ? `admin:${admin.username}` : user ? `user:${user.id}` : `guest:${randomUUID()}`,
       capability: JSON.stringify(capabilities),
       ttl: 60 * 60 * 1000,
     });

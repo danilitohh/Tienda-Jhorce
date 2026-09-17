@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import type { AuthenticatedUser, StoreRole } from "@backend/auth/auth-types";
-import { getRoleForVerifiedEmail } from "@backend/auth/role-service";
 import { hashPassword, verifyPassword } from "@backend/auth/password-service";
 import { createOpaqueToken, hashOpaqueToken } from "@backend/auth/token-service";
 import type { Collection } from "mongodb";
@@ -142,12 +141,13 @@ function toAuthenticatedUser(user: UserDocument): AuthenticatedUser {
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
-    role: user.role,
+    // Admin access is no longer derived from a customer email; customer sessions stay customer-only.
+    role: "customer",
     emailVerifiedAt: user.emailVerifiedAt?.toISOString() ?? null,
   };
 }
 
-// Create an unverified customer account; an owner role is granted only after email verification.
+// Create an unverified customer account; admin access is handled by a separate credential boundary.
 export async function createPendingUser(input: NewUserInput) {
   const { users } = await getAuthCollections();
   const now = new Date();
@@ -247,7 +247,7 @@ export async function createAuthToken(userId: string, kind: AuthTokenKind) {
   return token;
 }
 
-// Consume an email-verification token once, then promote only the configured, verified owner account.
+// Consume an email-verification token once while keeping every customer account in the customer role.
 export async function verifyEmailToken(token: string) {
   const { tokens, users } = await getAuthCollections();
   const now = new Date();
@@ -261,9 +261,8 @@ export async function verifyEmailToken(token: string) {
   const user = await users.findOne({ _id: tokenDocument.userId });
   if (!user) return null;
 
-  const role = getRoleForVerifiedEmail(user.email);
-  await users.updateOne({ _id: user._id }, { $set: { emailVerifiedAt: now, role, updatedAt: now } });
-  return { ...toAuthenticatedUser(user), role, emailVerifiedAt: now.toISOString() };
+  await users.updateOne({ _id: user._id }, { $set: { emailVerifiedAt: now, role: "customer", updatedAt: now } });
+  return { ...toAuthenticatedUser(user), role: "customer" as const, emailVerifiedAt: now.toISOString() };
 }
 
 // Replace a password after atomically consuming its short-lived reset link, then revoke every prior session.

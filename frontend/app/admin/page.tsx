@@ -8,14 +8,13 @@ import { loadAdminDashboard } from "@/lib/admin-data";
 export const metadata: Metadata = { title: "Panel admin", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
-// The route verifies the authenticated MongoDB session role before any operational data query runs.
+// The route verifies the separate admin MongoDB session before any operational data query runs.
 export default async function AdminPage() {
   const access = await getAdminAccess();
-  if (access.state === "signed-out") redirect("/login?next=/admin");
+  if (access.state === "signed-out") redirect("/admin/login");
   if (access.state === "not-configured") return <AdminAccessState state="not-configured" />;
-  if (access.state === "forbidden") return <AdminAccessState state="forbidden" />;
 
   const dashboard = await loadAdminDashboard();
   if (dashboard.state !== "ready") return <AdminAccessState state={dashboard.state} message={dashboard.message} />;
-  return <AdminDashboard data={dashboard.data} ownerEmail={access.email} />;
+  return <AdminDashboard data={dashboard.data} ownerUsername={access.username} />;
 }
