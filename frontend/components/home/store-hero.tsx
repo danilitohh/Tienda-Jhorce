@@ -1,56 +1,32 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import type { StoreProduct } from "@backend/catalog/catalog-data";
 
-// The storefront opening pairs one real catalog image with a short, immediately actionable message.
+// The campaign hero uses dedicated responsive editorial imagery so it keeps its intended composition on every screen.
 export function StoreHero({ product }: Readonly<{ product: StoreProduct }>) {
   return (
-    <section className="border-b border-ink/10 bg-gold-pale/45">
-      <div className="site-shell grid items-stretch gap-0 py-5 sm:py-8 lg:grid-cols-[.88fr_1.12fr] lg:py-10">
-        <div className="flex min-h-[24rem] flex-col justify-center bg-paper px-6 py-12 sm:px-10 lg:min-h-[35rem] lg:px-14 lg:py-16">
-          <p className="eyebrow">Pelucas byjhor</p>
-          <h1 className="mt-5 max-w-xl font-display text-5xl font-semibold leading-[.88] tracking-[-.055em] text-ink sm:text-7xl lg:text-[5.6rem]">
-            Tu esencia,
-            <span className="block text-gold-deep">tu estilo.</span>
-          </h1>
-          <p className="mt-6 max-w-md text-[15px] leading-7 text-muted sm:text-base">
-            Pelucas y accesorios para explorar tu look con libertad, todos los días.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-5">
-            <Link href="/catalogo" className="button-primary">
-              Ver las pelucas
-              <ArrowRight size={18} />
-            </Link>
-            <Link href="/catalogo?category=Accesorios" className="text-link">
-              Ver cuidados
-            </Link>
-          </div>
-          <p className="mt-12 border-t border-ink/10 pt-5 text-[0.68rem] font-medium uppercase tracking-[.18em] text-muted">
-            Largos, tonos y accesorios para elegir a tu manera
-          </p>
-        </div>
-
-        <figure className="relative m-0 min-h-[22rem] overflow-hidden bg-gold-soft sm:min-h-[30rem] lg:min-h-0">
-          <Image
-            src={product.image}
-            alt={`Imagen de ${product.name}`}
-            fill
-            priority
-            sizes="(max-width: 1024px) 100vw, 56vw"
-            className="object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink/35 via-transparent to-transparent" aria-hidden="true" />
-          <figcaption className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-4 p-5 text-paper sm:p-7">
-            <div>
-              <p className="text-[0.65rem] font-bold uppercase tracking-[.18em] text-gold-soft">Con movimiento</p>
-              <p className="mt-2 font-display text-2xl font-semibold leading-none">{product.name}</p>
+    <section className="border-b border-ink/10 bg-paper py-3 sm:py-5 lg:py-7">
+      <div className="site-shell">
+        <div className="relative min-h-[34rem] overflow-hidden rounded-[12px] bg-gold-pale sm:min-h-[40rem] lg:min-h-[35rem]">
+          <picture className="absolute inset-0">
+            <source media="(max-width: 1023px)" srcSet="/campaign/byjhor-hero-mobile.png" />
+            <img src="/campaign/byjhor-hero-desktop.png" alt="Mujer usando una peluca negra de ondas largas" fetchPriority="high" className="h-full w-full object-cover object-center" />
+          </picture>
+          <div className="absolute inset-0 bg-gradient-to-b from-paper/10 via-paper/25 to-paper/95 lg:bg-gradient-to-r lg:from-paper via-paper/85 lg:via-42% lg:to-transparent" aria-hidden="true" />
+          <div className="relative z-10 flex min-h-[34rem] max-w-xl flex-col justify-end px-6 pb-9 pt-40 sm:min-h-[40rem] sm:px-10 sm:pb-12 lg:min-h-[35rem] lg:justify-center lg:px-14 lg:py-16">
+            <p className="eyebrow">Más que una peluca</p>
+            <h1 className="mt-4 font-display text-5xl font-semibold leading-[.88] tracking-[-.055em] text-ink sm:text-7xl lg:text-[5.8rem]">
+              Tu esencia,
+              <span className="block text-gold-deep">tu estilo.</span>
+            </h1>
+            <p className="mt-5 max-w-md text-[15px] leading-7 text-ink/75 sm:text-base">Pelucas y accesorios para explorar tu look con libertad, todos los días.</p>
+            <div className="mt-7 flex flex-wrap items-center gap-5">
+              <Link href="/catalogo" className="button-primary">Ver las pelucas <ArrowRight size={18} /></Link>
+              <Link href={`/producto/${product.slug}`} className="text-link">Ver el look</Link>
             </div>
-            <Link href={`/producto/${product.slug}`} className="shrink-0 text-sm font-semibold underline decoration-paper/55 underline-offset-6 transition-colors hover:text-gold-soft">
-              Ver pieza
-            </Link>
-          </figcaption>
-        </figure>
+            <p className="mt-9 text-[0.68rem] font-medium uppercase tracking-[.18em] text-muted">Belleza real, todos los días</p>
+          </div>
+        </div>
       </div>
     </section>
   );

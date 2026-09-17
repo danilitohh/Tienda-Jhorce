@@ -19,8 +19,8 @@ export type StoreProduct = {
 
 // Demo catalog data keeps the first storefront increment reviewable before Supabase is connected.
 // Product IDs, slugs, prices and variant field names remain stable while the visible assortment
-// is written for byjhor's wig and hair-care offer.
-// TODO: replace these conceptual visuals with authorized photography of the real inventory before launch.
+// is written for byjhor's wig and hair-care offer. Campaign imagery is intentionally separate from
+// the product contract and can be replaced by authorized inventory photography without code changes.
 export const PRODUCTS: StoreProduct[] = [
   {
     id: "p-001",
@@ -30,8 +30,8 @@ export const PRODUCTS: StoreProduct[] = [
     price: 89000,
     compareAtPrice: 109000,
     description: "Una silueta versátil con caída natural para cambiar de look sin perder tu esencia.",
-    image: "/catalog/peluca-aura.webp",
-    secondaryImage: "/catalog/peluca-aura.webp",
+    image: "/campaign/peluca-aura.png",
+    secondaryImage: "/campaign/peluca-aura.png",
     badge: "Más elegida",
     sizes: ["12\"", "14\"", "16\"", "18\"", "20\""],
     colors: ["Negro natural", "Castaño suave"],
@@ -45,8 +45,8 @@ export const PRODUCTS: StoreProduct[] = [
     category: "Movimiento",
     price: 189000,
     description: "Fibra sintética de acabado suave, ligera y fácil de peinar para el día a día.",
-    image: "/catalog/peluca-ruta.webp",
-    secondaryImage: "/catalog/peluca-ruta.webp",
+    image: "/campaign/peluca-ruta.png",
+    secondaryImage: "/campaign/peluca-ruta.png",
     badge: "Nuevo",
     sizes: ["12\"", "14\"", "16\"", "18\"", "20\""],
     colors: ["Castaño oscuro", "Negro azabache"],
@@ -60,8 +60,8 @@ export const PRODUCTS: StoreProduct[] = [
     category: "Movimiento",
     price: 279000,
     description: "Volumen definido y movimiento natural para una presencia que se siente tuya.",
-    image: "/catalog/peluca-norte.webp",
-    secondaryImage: "/catalog/peluca-norte.webp",
+    image: "/campaign/peluca-norte.png",
+    secondaryImage: "/campaign/peluca-norte.png",
     sizes: ["18\"", "20\"", "22\"", "24\""],
     colors: ["Chocolate", "Negro natural"],
     rating: 4.7,
@@ -74,8 +74,8 @@ export const PRODUCTS: StoreProduct[] = [
     category: "Accesorios",
     price: 149000,
     description: "Peine, gorro y cepillo para preparar, ajustar y cuidar tu peluca.",
-    image: "/catalog/kit-trazo.webp",
-    secondaryImage: "/catalog/kit-trazo.webp",
+    image: "/campaign/kit-trazo.png",
+    secondaryImage: "/campaign/kit-trazo.png",
     badge: "Últimas unidades",
     colors: ["Arena", "Negro"],
     rating: 4.9,
@@ -88,8 +88,8 @@ export const PRODUCTS: StoreProduct[] = [
     category: "Esenciales",
     price: 139000,
     description: "Línea recta y brillo sutil para un look pulido, cómodo y fácil de llevar.",
-    image: "/catalog/peluca-linea.webp",
-    secondaryImage: "/catalog/peluca-linea.webp",
+    image: "/campaign/peluca-linea.png",
+    secondaryImage: "/campaign/peluca-linea.png",
     sizes: ["12\"", "14\"", "16\"", "18\""],
     colors: ["Rubio miel", "Castaño claro"],
     rating: 4.8,
@@ -102,8 +102,8 @@ export const PRODUCTS: StoreProduct[] = [
     category: "Accesorios",
     price: 79000,
     description: "Accesorios esenciales para guardar, desenredar y prolongar la vida de tu peluca.",
-    image: "/catalog/kit-punto.webp",
-    secondaryImage: "/catalog/kit-punto.webp",
+    image: "/campaign/kit-punto.png",
+    secondaryImage: "/campaign/kit-punto.png",
     badge: "Edición limitada",
     colors: ["Marfil", "Negro"],
     rating: 4.6,
