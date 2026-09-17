@@ -10,6 +10,13 @@ const categoryLinks: ReadonlyArray<{ name: ProductCategory; label: string }> = [
   { name: "Accesorios", label: categoryLabels.Accesorios },
 ];
 
+// Each real catalog category receives a soft reference-inspired tone without changing its data or route.
+const categoryTones: Record<ProductCategory, string> = {
+  Esenciales: "bg-sage",
+  Movimiento: "bg-blush",
+  Accesorios: "bg-sun/35",
+};
+
 // Build category navigation from the real catalog images instead of introducing placeholder content.
 export function CategoryGrid({ products }: Readonly<{ products: StoreProduct[] }>) {
   const availableCategories = categoryLinks
@@ -26,12 +33,14 @@ export function CategoryGrid({ products }: Readonly<{ products: StoreProduct[] }
     </div>
     <div className="mt-9 grid gap-4 sm:grid-cols-3 sm:gap-5 lg:mt-12">
       {availableCategories.map(({ name, label, product }) => <Link key={name} href={`/catalogo?category=${name}`} className="group">
-        <div className="relative aspect-[4/3] overflow-hidden rounded-[10px] bg-sand">
-          <Image src={product.image} alt={`Explorar ${label}`} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+        <div className={`relative rounded-[12px] p-2.5 sm:p-3 ${categoryTones[name]}`}>
+          <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] bg-white">
+            <Image src={product.image} alt={`Explorar ${label}`} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+          </div>
         </div>
         <div className="flex items-center justify-between border-b border-ink/15 py-4">
           <span className="font-display text-2xl font-semibold text-ink">{label}</span>
-          <ArrowUpRight aria-hidden="true" size={20} className="text-gold-deep transition-transform duration-300 group-hover:translate-x-1" />
+          <ArrowUpRight aria-hidden="true" size={20} className="text-teal transition-transform duration-300 group-hover:translate-x-1" />
         </div>
       </Link>)}
     </div>

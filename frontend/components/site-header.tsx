@@ -26,16 +26,16 @@ export function SiteHeader() {
       <Link href="/" aria-label="byjhor, inicio" className="shrink-0">
         <BrandLogo priority />
       </Link>
-      <nav className="hidden items-center gap-7 text-sm font-medium lg:flex" aria-label="Navegación principal">
-        {navLinks.map((link) => <Link key={link.href} href={link.href} className="text-ink/75 transition-colors hover:text-accent-deep">{link.label}</Link>)}
+      <nav className="hidden items-center gap-5 text-sm font-medium xl:flex 2xl:gap-7" aria-label="Navegación principal">
+        {navLinks.map((link) => <Link key={link.href} href={link.href} className="text-ink/75 transition-colors hover:text-coral">{link.label}</Link>)}
       </nav>
       <div className="flex items-center gap-1 sm:gap-2">
-        <Link href="/catalogo" className="rounded-[9px] p-2 text-ink transition-colors hover:bg-white hover:text-accent-deep" aria-label="Buscar productos"><StoreSearchIcon size={21} /></Link>
-        <Link className="hidden rounded-[9px] p-2 text-ink transition-colors hover:bg-white hover:text-accent-deep sm:block" href="/login" aria-label="Mi cuenta"><span className="text-sm font-medium">Cuenta</span></Link>
-        <Link className="relative rounded-[9px] p-2 text-ink transition-colors hover:bg-white hover:text-accent-deep" href="/carrito" aria-label={`Carrito con ${itemCount} productos`}><StoreBagIcon size={23} />{itemCount > 0 && <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-ink">{itemCount}</span>}</Link>
-        <button className="rounded-[9px] p-2 text-ink transition-colors hover:bg-white lg:hidden" aria-label={open ? "Cerrar menú" : "Abrir menú"} aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen((current) => !current)}>{open ? <X size={21} /> : <List size={21} />}</button>
+        <Link href="/catalogo" className="rounded-[9px] p-2 text-ink transition-colors hover:bg-sage hover:text-teal" aria-label="Buscar productos"><StoreSearchIcon size={21} /></Link>
+        <Link className="hidden rounded-[9px] p-2 text-ink transition-colors hover:bg-sage hover:text-teal sm:block" href="/login" aria-label="Mi cuenta"><span className="text-sm font-medium">Cuenta</span></Link>
+        <Link className="relative rounded-[9px] p-2 text-ink transition-colors hover:bg-sage hover:text-teal" href="/carrito" aria-label={`Carrito con ${itemCount} productos`}><StoreBagIcon size={23} />{itemCount > 0 && <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-coral px-1 text-[10px] font-bold text-white">{itemCount}</span>}</Link>
+        <button className="rounded-[9px] p-2 text-ink transition-colors hover:bg-sage xl:hidden" aria-label={open ? "Cerrar menú" : "Abrir menú"} aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen((current) => !current)}>{open ? <X size={21} /> : <List size={21} />}</button>
       </div>
     </div>
-    {open && <nav id="mobile-navigation" className="border-t border-ink/10 bg-paper lg:hidden" aria-label="Navegación móvil"><div className="site-shell grid gap-1 py-3 text-sm"><Link className="rounded-[8px] px-3 py-3 hover:bg-white" href="/login" onClick={() => setOpen(false)}>Cuenta</Link>{navLinks.map((link) => <Link key={link.href} className="rounded-[8px] px-3 py-3 hover:bg-white" href={link.href} onClick={() => setOpen(false)}>{link.label}</Link>)}</div></nav>}
+    {open && <nav id="mobile-navigation" className="border-t border-ink/10 bg-paper xl:hidden" aria-label="Navegación móvil"><div className="site-shell grid gap-1 py-3 text-sm"><Link className="rounded-[8px] px-3 py-3 hover:bg-blush" href="/login" onClick={() => setOpen(false)}>Cuenta</Link>{navLinks.map((link) => <Link key={link.href} className="rounded-[8px] px-3 py-3 hover:bg-blush" href={link.href} onClick={() => setOpen(false)}>{link.label}</Link>)}</div></nav>}
   </header>;
 }

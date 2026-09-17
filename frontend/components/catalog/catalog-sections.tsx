@@ -23,7 +23,7 @@ export function CatalogSections({ products }: Readonly<{ products: StoreProduct[
             <p className="eyebrow">{category.eyebrow}</p>
             <h2 id={`categoria-${category.value.toLowerCase()}-title`} className="mt-3 font-display text-4xl font-semibold leading-[.95] tracking-[-.03em] text-ink sm:text-5xl">{category.label}</h2>
           </div>
-          <Link href={`/catalogo?category=${category.value}`} className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-ink underline underline-offset-8 transition-colors hover:text-accent-deep">Ver categoría <span aria-hidden="true">↗</span></Link>
+          <Link href={`/catalogo?category=${category.value}`} className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-ink underline underline-offset-8 transition-colors hover:text-coral">Ver categoría <span aria-hidden="true">↗</span></Link>
         </div>
         <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-6">
           {categoryProducts.map((product) => <ProductCard key={product.id} product={product} />)}

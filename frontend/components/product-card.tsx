@@ -21,10 +21,10 @@ export function ProductCard({ product }: Readonly<{ product: StoreProduct }>) {
     </div>
     <div className="flex min-h-[8rem] flex-1 items-start justify-between gap-3 pt-4">
       <div>
-        <p className="text-[0.65rem] font-bold uppercase tracking-[.16em] text-accent-deep">{getCategoryLabel(product.category)}</p>
-        <Link href={`/producto/${product.slug}`} className="mt-2 block font-display text-[1.35rem] font-semibold leading-none tracking-[-.02em] transition-colors hover:text-accent-deep">{product.name}</Link>
+        <p className="text-[0.65rem] font-bold uppercase tracking-[.16em] text-teal">{getCategoryLabel(product.category)}</p>
+        <Link href={`/producto/${product.slug}`} className="mt-2 block font-display text-[1.35rem] font-semibold leading-none tracking-[-.02em] transition-colors hover:text-coral">{product.name}</Link>
         <p className="mt-2 text-xs text-muted">{product.colors?.length ? `${getColorLabel(product.category)}: ${product.colors[0]}` : "Accesorio para cuidado"}</p>
-        {product.badge && <p className="mt-2 text-xs font-medium text-accent-deep">{product.badge}</p>}
+        {product.badge && <p className="mt-2 text-xs font-medium text-coral">{product.badge}</p>}
       </div>
       <div className="shrink-0 text-right">
         <p className="font-body text-sm font-semibold tabular-nums">{formatCop(product.price)}</p>
