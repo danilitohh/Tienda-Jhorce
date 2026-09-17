@@ -10,7 +10,7 @@ The first increment contains:
 - persistent client cart with quantity controls and checkout handoff;
 - local React Bits-style visual components isolated under `frontend/components/react-bits/`;
 - MongoDB-backed customer authentication with verified email, secure sessions and password recovery;
-- MongoDB admin dashboard data reader with a separate private username/password session plus a legacy Prisma planning schema for future relational imports;
+- MongoDB admin workspace with a separate private username/password session, product CRUD, inventory editing and order status operations, plus a legacy Prisma planning schema for future relational imports;
 - Zod input validation, consistent API responses, health check, product API, and a mock payment provider adapter;
 - unit test coverage for pricing and a Playwright smoke flow scaffold;
 - SEO metadata, sitemap and robots routes.
@@ -65,5 +65,5 @@ The Playwright suite expects the dev server to be running or starts it automatic
 - Payments use `PaymentProvider` and `MockPaymentProvider`; adding Wompi, ePayco, Stripe or MercadoPago means implementing the same adapter contract.
 - Interrapidísimo is intentionally not integrated by API. `Shipment` stores carrier-agnostic tracking data and the UI points customers to the public tracking page.
 - Expiring reservations, failed emails and retryable work are modeled as `Job` records in the legacy planning schema for a future Vercel Cron-compatible implementation.
-- The current product data is demo data. MongoDB powers authentication and the admin data reader; catalog persistence can be connected in a later increment.
-- Ably capabilities are intentionally narrow. Product and order mutation endpoints should call `publishRealtimeEvent` only after a successful server-side write.
+- The catalog repository reads published products from MongoDB and falls back to the current local catalog only while the configured products collection is empty. Products created or edited in `/admin` use the same public product contract and become visible in the storefront after publication.
+- Ably capabilities are intentionally narrow. Product and order mutation endpoints call `publishRealtimeEvent` only after a successful server-side write, so open storefronts and admin sessions refresh without exposing the root key.

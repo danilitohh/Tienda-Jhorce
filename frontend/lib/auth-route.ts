@@ -22,7 +22,7 @@ export async function readValidatedBody<T>(request: NextRequest, schema: ZodType
     const payload: unknown = await request.json();
     return schema.safeParse(payload);
   } catch {
-    return { success: false as const };
+    return schema.safeParse(undefined);
   }
 }
 
