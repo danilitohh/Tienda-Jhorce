@@ -14,8 +14,8 @@ test("customer can browse catalog and add a product", async ({ page }) => {
   await expect(page.getByRole("link", { name: /Carrito con 1 productos/ })).toBeVisible();
 });
 
-// Without Supabase credentials, the protected route must show setup guidance instead of operational data.
-test("admin route keeps data private until Supabase is configured", async ({ page }) => {
+// Without the required services, the protected route must show setup guidance instead of operational data.
+test("admin route keeps data private until its services are configured", async ({ page }) => {
   await page.goto("/admin");
   await expect(page.getByRole("heading", { name: /Configura el acceso de la dueña/ })).toBeVisible();
   await expect(page.getByText("Productos recientes")).toHaveCount(0);
