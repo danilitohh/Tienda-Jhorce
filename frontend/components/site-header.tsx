@@ -13,7 +13,7 @@ const navLinks = [
   { label: categoryLabels.Esenciales, href: "/catalogo?category=Esenciales" },
   { label: categoryLabels.Movimiento, href: "/catalogo?category=Movimiento" },
   { label: categoryLabels.Accesorios, href: "/catalogo?category=Accesorios" },
-  { label: "Sobre byjhor", href: "/#historia" },
+  { label: "Sobre ByJhor", href: "/#historia" },
 ] as const;
 
 // The site header keeps the supplied mark visible while preserving compact desktop and mobile navigation.
