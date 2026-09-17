@@ -26,7 +26,7 @@ export function CategoryGrid({ products }: Readonly<{ products: StoreProduct[] }
           </div>
           <p className="max-w-sm text-sm leading-6 text-muted sm:text-right">Largos, tonos y accesorios para elegir cómo quieres verte.</p>
         </div>
-        <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-[1.15fr_.9fr_.9fr] lg:gap-6">
+        <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
           {availableCategories.map(({ name, label, tone, product }) => (
             <Link key={name} href={`/catalogo?category=${name}`} className="group">
               <div className={`relative overflow-hidden rounded-[16px] p-2 ${tone}`}>
